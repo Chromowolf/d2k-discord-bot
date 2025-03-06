@@ -144,12 +144,12 @@ docker-compose up -d --build --force-recreate
 ## File Structure
 
 ```
-my-discord-bot/
+testbot/
 ├── .env                  # Environment variables
 ├── docker-compose.yml    # Docker Compose configuration
 ├── Dockerfile            # Docker image instructions
-├── README.md             # This file
+├── ReadMe.md             # This file
 └── src/                  # Your bot's source code
-    ├── main.py           # Bot entry point
+    ├── discord_app.py    # Bot entry point
     └── ...               # Other Python modules
 ```
