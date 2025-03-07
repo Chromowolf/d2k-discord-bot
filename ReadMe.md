@@ -149,7 +149,7 @@ testbot/
 ├── docker-compose.yml    # Docker Compose configuration
 ├── Dockerfile            # Docker image instructions
 ├── ReadMe.md             # This file
-└── src/                  # Your bot's source code
+└── src/                  # Bot's source code
     ├── discord_app.py    # Bot entry point
     └── ...               # Other Python modules
 ```
