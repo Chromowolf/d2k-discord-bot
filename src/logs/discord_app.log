@@ -75,3 +75,23 @@
 2025-03-07 15:55:03 +0000 discord.gateway INFO     Shard ID None has connected to Gateway (Session ID: 5cc2a4987751387dce199db343565969).
 2025-03-07 15:55:05 +0000 bot_client INFO     Logged in as Dune2000Pere2#4934
 2025-03-07 15:55:05 +0000 bot_client INFO     ------
+2025-03-07 16:14:41 +0000 discord.client WARNING  PyNaCl is not installed, voice will NOT be supported
+2025-03-07 16:14:41 +0000 __main__   INFO     Starting Discord bot...
+2025-03-07 16:14:41 +0000 discord.client INFO     logging in using static token
+2025-03-07 16:14:42 +0000 discord.gateway INFO     Shard ID None has connected to Gateway (Session ID: 1f81ae64828c0a553554f28e4541e503).
+2025-03-07 16:26:05 +0000 discord.client WARNING  PyNaCl is not installed, voice will NOT be supported
+2025-03-07 16:26:05 +0000 __main__   INFO     Starting Discord bot...
+2025-03-07 16:26:05 +0000 discord.client INFO     logging in using static token
+2025-03-07 16:26:06 +0000 cogs.basic_commands INFO     Basic commands registered
+2025-03-07 16:26:06 +0000 bot_client INFO     Synced commands for Dune2000Pere2#4934
+2025-03-07 16:26:07 +0000 discord.gateway INFO     Shard ID None has connected to Gateway (Session ID: 0b1f01e8f9b7d92d2385213285d44e89).
+2025-03-07 16:26:09 +0000 bot_client INFO     Logged in as Dune2000Pere2#4934
+2025-03-07 16:26:09 +0000 bot_client INFO     ------
+2025-03-07 16:27:48 +0000 discord.client WARNING  PyNaCl is not installed, voice will NOT be supported
+2025-03-07 16:27:48 +0000 __main__   INFO     Starting Discord bot...
+2025-03-07 16:27:48 +0000 discord.client INFO     logging in using static token
+2025-03-07 16:27:49 +0000 cogs.basic_commands INFO     Basic commands registered
+2025-03-07 16:27:49 +0000 bot_client INFO     Synced commands for Dune2000Pere2#4934
+2025-03-07 16:27:50 +0000 discord.gateway INFO     Shard ID None has connected to Gateway (Session ID: 10ad559b2bb075431bb1025fac1b928e).
+2025-03-07 16:27:52 +0000 bot_client INFO     Logged in as Dune2000Pere2#4934
+2025-03-07 16:27:52 +0000 bot_client INFO     ------

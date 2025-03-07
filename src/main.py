@@ -3,7 +3,6 @@ import logging
 from bot_client import create_client
 from config import DISCORD_TOKEN
 
-
 # Get the directory where the current script is located
 script_dir = Path(__file__).parent
 
@@ -28,7 +27,10 @@ if __name__ == "__main__":
     try:
         client = create_client()
         logger.info("Starting Discord bot...")
+
+        # Run the client
         client.run(DISCORD_TOKEN)
+
     except Exception as e:
         logger.exception(f"An error occurred: {e}")
     finally:
