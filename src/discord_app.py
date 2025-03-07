@@ -8,15 +8,15 @@ import logging
 file_path = Path(__file__)  # Get the Path object for the current file
 log_file = file_path.with_suffix('.log')  # Change the extension to ".log"
 
-logger = logging.getLogger(__name__)  # Currently no handler for "__main__"
-logger.setLevel(logging.INFO)  # This level is for the logger itself, not handler.
-
 logging.basicConfig(
-    filename="log_file",  # Set a handler to the root logger
+    filename=log_file,  # Set a handler to the root logger
     level=logging.INFO,  # Set the level of the root logger to this, not handler. The handler's level is still NOTSET
     format='%(asctime)s %(name)-10s %(levelname)-8s %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S %z'  # Add timezone info
 )
+
+logger = logging.getLogger(__name__)  # Currently no handler for "__main__"
+logger.setLevel(logging.INFO)  # This level is for the logger itself, not handler.
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 
@@ -49,13 +49,17 @@ async def hello(interaction):
 # Event for when the bot is ready
 @client.event
 async def on_ready():
-    logger.info(f'Logged in as {client.user} (ID: {client.user.id})')
+    # logger.info(f'Logged in as {client.user} (ID: {client.user.id})')
+    logger.info(f'Logged in as {client.user}')
     logger.info('------')
 
 
 if __name__ == "__main__":
     try:
         # Run the client
+        logger.info("Starting Discord bot...")
         client.run(TOKEN)
     except Exception as e:
         logger.exception(f"An error occurred: {e}")
+    finally:
+        logger.info("Bot is shutting down")
