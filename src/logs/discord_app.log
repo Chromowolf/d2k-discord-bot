@@ -1,0 +1,8 @@
+2025-03-07 13:53:26 +0000 discord.client WARNING  PyNaCl is not installed, voice will NOT be supported
+2025-03-07 13:53:26 +0000 __main__   INFO     Starting Discord bot...
+2025-03-07 13:53:26 +0000 discord.client INFO     logging in using static token
+2025-03-07 13:53:27 +0000 cogs.basic_commands INFO     Basic commands registered
+2025-03-07 13:53:27 +0000 bot_client INFO     Synced commands for Dune2000Pere2#4934
+2025-03-07 13:53:28 +0000 discord.gateway INFO     Shard ID None has connected to Gateway (Session ID: f1a6651a9bf7efebdca4162adb8c0132).
+2025-03-07 13:53:30 +0000 bot_client INFO     Logged in as Dune2000Pere2#4934
+2025-03-07 13:53:30 +0000 bot_client INFO     ------

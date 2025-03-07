@@ -10,4 +10,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 # COPY src/ .
 
 # Command to run the Discord bot
-CMD ["python", "discord_app.py"]
+CMD ["python", "main.py"]
