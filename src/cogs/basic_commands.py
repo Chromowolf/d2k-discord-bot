@@ -1,21 +1,26 @@
 import logging
 import discord
+from config import D2K_SERVER_ID
 
 logger = logging.getLogger(__name__)
-
+guild = discord.Object(D2K_SERVER_ID)
 
 def setup_basic_commands(client):
     """Register all basic commands with the client."""
 
-    @client.tree.command(name="hello", description="Says hello")
+    @client.tree.command(name="hello", description="Says hello", guild=guild)
     async def hello(interaction):
         await interaction.response.send_message(f"Hello, {interaction.user.mention}!")
 
-    @client.tree.command(name="hello2", description="Says hello (2)")
+    @client.tree.command(name="hello2", description="Says hello (2)", guild=guild)
     async def hello2(interaction):
         await interaction.response.send_message(f"Hello2, {interaction.user.mention}!")
 
-    @client.tree.command(name="embed", description="Sends an example embed message")
+    # @client.tree.command(name="hello4", description="Says hello (4)", guild=guild)
+    # async def hello3(interaction):
+    #     await interaction.response.send_message(f"Hello4, {interaction.user.mention}!")
+
+    @client.tree.command(name="embed", description="Sends an example embed message", guild=guild)
     async def embed_example(interaction):
         # Create an embed object
         embed = discord.Embed(

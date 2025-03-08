@@ -32,6 +32,6 @@ if __name__ == "__main__":
         client.run(DISCORD_TOKEN)
 
     except Exception as e:
-        logger.exception(f"An error occurred: {e}")
+        logger.exception(f"An error occurred while running: {e}")
     finally:
         logger.info("Bot is shutting down")
