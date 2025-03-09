@@ -15,12 +15,14 @@ guild = discord.Object(D2K_SERVER_ID)
 
 class MyClient(commands.Bot):
     def __init__(self):
-        intents = discord.Intents.default()
+        # intents = discord.Intents.default()
+        intents = discord.Intents.all()
         intents.message_content = True
         super().__init__(command_prefix="!", intents=intents)  # "!" is just a placeholder
         self.cogs_list = [
             "basic_commands",
             "excuses",
+            "time_tracker",
         ]
 
     async def setup_hook(self):
