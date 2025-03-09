@@ -4,7 +4,8 @@ import logging
 from config import D2K_SERVER_ID
 
 from cogs.basic_commands import setup_basic_commands
-# from cogs.time_tracker import setup_time_tracker
+from cogs.execuses import setup_excuses
+from cogs.time_tracker import setup_time_tracker
 
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
@@ -15,11 +16,13 @@ class MyClient(discord.Client):
         intents = discord.Intents.default()
         super().__init__(intents=intents)
         self.tree = app_commands.CommandTree(self)
+        self.time_tracker = None
 
     async def setup_hook(self):
         # Register all cogs
         setup_basic_commands(self)
-        # setup_time_tracker(self)
+        setup_excuses(self)
+        setup_time_tracker(self)
 
         try:
             # Clear global commands first
@@ -37,6 +40,7 @@ class MyClient(discord.Client):
             logger.exception(f"Error syncing commands: {e}")
 
     async def on_ready(self):
+        # To be wrapped by other cogs
         logger.info(f'Logged in as {self.user}')
         logger.info('------')
 
