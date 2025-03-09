@@ -3,10 +3,11 @@ import discord
 from discord.ext import commands
 import logging
 from config import D2K_SERVER_ID
+# import os
 
-from cogs.basic_commands import setup_basic_commands
-from cogs.execuses import setup_excuses
-from cogs.time_tracker import setup_time_tracker
+# from cogs.basic_commands import setup_basic_commands
+# from cogs.execuses import setup_excuses
+# from cogs.time_tracker import setup_time_tracker
 
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
@@ -16,22 +17,29 @@ class MyClient(commands.Bot):
     def __init__(self):
         intents = discord.Intents.default()
         super().__init__(command_prefix="!", intents=intents)  # "!" is just a placeholder
-        # self.tree = app_commands.CommandTree(self)
-        self.time_tracker = None
+        self.cogs_list = [
+            "basic_commands",
+            "excuses",
+        ]
 
     async def setup_hook(self):
-        # Register all cogs
-        setup_basic_commands(self)
-        setup_excuses(self)
-        setup_time_tracker(self)
+        # Load all cogs
+        for cog in self.cogs_list:
+            cog_name = f"cogs.{cog}"
+            logger.info(f"Loading extension {cog_name}")
+            await self.load_extension(cog_name)
 
+        # setup_basic_commands(self)
+        # setup_excuses(self)
+
+        # The slash commands(app_command) must be synced!
         try:
             # Clear global commands first
             # self.tree.clear_commands(guild=None)
             # await self.tree.sync()
             # logger.info("Cleared all global commands")
 
-            # Then sync guild-specific commands
+            # Then sync guild-specific app_commands
             synced = await self.tree.sync(guild=guild)
             logger.info(f"Synced {len(synced)} commands to guild {guild.id}.")
             # Log details of each command

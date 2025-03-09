@@ -1,23 +1,35 @@
 import logging
 import discord
+from discord.ext import commands
+from discord import app_commands
 from config import D2K_SERVER_ID
 
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
 
-def setup_basic_commands(client):
-    """Register all basic commands with the client."""
+class BasicCommands(commands.Cog):
+    """
+    Register all basic commands with the client.
+    """
 
-    @client.tree.command(name="hello", description="Says hello", guild=guild)
-    async def hello0(interaction):
-        await interaction.response.send_message(f"Hello again!, {interaction.user.mention}!")
+    def __init__(self, bot):
+        self.bot = bot
+
+    # @app_commands.command(name="hello", description="Sends a hello message")
+    # async def hello_command(self, interaction: discord.Interaction):
+    #     await interaction.response.send_message(f"Hello, {interaction.user.mention}!")
+
+    @app_commands.command(name="hello1", description="Says hello1")
+    async def hello1(self, interaction):
+        await interaction.response.send_message(f"Hello again111!, {interaction.user.mention}!")
 
     # @client.tree.command(name="hello4", description="Says hello (4)", guild=guild)
     # async def hello3(interaction):
     #     await interaction.response.send_message(f"Hello4, {interaction.user.mention}!")
 
-    @client.tree.command(name="embed", description="Sends an example embed message", guild=guild)
-    async def embed_example(interaction):
+    # @client.tree.command(name="embed", description="Sends an example embed message", guild=guild)
+    @app_commands.command(name="embed", description="Sends an example embed message")
+    async def embed_example(self, interaction):
         # Create an embed object
         embed = discord.Embed(
             title="Example Embed",
@@ -41,9 +53,10 @@ def setup_basic_commands(client):
 
         # Add a footer with an icon
         embed.set_footer(text="Sent at " + discord.utils.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
-                         icon_url=client.user.display_avatar.url)
+                         icon_url=self.bot.user.display_avatar.url)
 
         # Send the embed
         await interaction.response.send_message(embed=embed)
 
-    logger.info("Basic commands registered")
+async def setup(bot):
+    await bot.add_cog(BasicCommands(bot), guild=guild)

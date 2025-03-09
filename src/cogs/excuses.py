@@ -2,6 +2,8 @@ import logging
 import discord
 from config import D2K_SERVER_ID
 import random
+from discord.ext import commands
+from discord import app_commands
 
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
@@ -106,7 +108,7 @@ def generate_response_format(user, excuse):
         f"The truth according to {user}: \"{excuse}\" - take it or leave it.",
         f"{user} died because \"{excuse}\"... respawning in 3...2...1...",
         f"{user} didn't lose. The game just failed to recognize that \"{excuse}\"",
-        f"{user} solemnly swears \"{excuse}\" (with their hand on the Dune 2000 manual)",
+        f"{user} solemnly swears \"{excuse}\"",
         f"{user}: \"{excuse}\" — and I'll die on this hill!",
         f"*Documentary voice* Here we see {user} in their natural habitat, claiming \"{excuse}\"",
         f"{user} has prepared a PowerPoint presentation titled: \"{excuse}\"",
@@ -124,10 +126,15 @@ def generate_response_format(user, excuse):
 
     return random.choice(formats)
 
+class Excuses(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
 
-def setup_excuses(client):
-    @client.tree.command(name="excuse", description="Generates a random excuse for losing", guild=guild)
-    async def excuse(interaction):
+    @app_commands.command(name="excuse", description="Generates a random excuse for losing")
+    async def excuse(self, interaction):
         excuse_text = generate_excuse()
         response = generate_response_format(interaction.user.mention, excuse_text)
         await interaction.response.send_message(response)
+
+async def setup(bot):
+    await bot.add_cog(Excuses(bot), guild=guild)
