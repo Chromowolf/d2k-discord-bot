@@ -9,12 +9,8 @@ def setup_basic_commands(client):
     """Register all basic commands with the client."""
 
     @client.tree.command(name="hello", description="Says hello", guild=guild)
-    async def hello(interaction):
-        await interaction.response.send_message(f"Hello, {interaction.user.mention}!")
-
-    @client.tree.command(name="hello2", description="Says hello (2)", guild=guild)
-    async def hello2(interaction):
-        await interaction.response.send_message(f"Hello2, {interaction.user.mention}!")
+    async def hello0(interaction):
+        await interaction.response.send_message(f"Hello again!, {interaction.user.mention}!")
 
     # @client.tree.command(name="hello4", description="Says hello (4)", guild=guild)
     # async def hello3(interaction):

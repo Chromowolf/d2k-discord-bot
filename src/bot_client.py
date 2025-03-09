@@ -1,5 +1,6 @@
 import discord
-from discord import app_commands
+# from discord import app_commands
+from discord.ext import commands
 import logging
 from config import D2K_SERVER_ID
 
@@ -11,11 +12,11 @@ logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
 
 
-class MyClient(discord.Client):
+class MyClient(commands.Bot):
     def __init__(self):
         intents = discord.Intents.default()
-        super().__init__(intents=intents)
-        self.tree = app_commands.CommandTree(self)
+        super().__init__(command_prefix="!", intents=intents)  # "!" is just a placeholder
+        # self.tree = app_commands.CommandTree(self)
         self.time_tracker = None
 
     async def setup_hook(self):
