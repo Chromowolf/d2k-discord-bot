@@ -40,7 +40,7 @@ class TimeTracker(commands.Cog):
                 for old_message in bot_messages[1:]:
                     await old_message.delete()
 
-    @tasks.loop(seconds=5)
+    @tasks.loop(seconds=60)
     async def time_update(self):
         channel = self.bot.get_channel(self.CHANNEL_ID)
         if channel:
