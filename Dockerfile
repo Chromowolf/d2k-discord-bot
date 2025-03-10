@@ -10,4 +10,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # COPY src/ .
 
 # Command to run the Discord bot
-CMD ["python", "main.py"]
+# CMD ["python", "main.py"]
+CMD ["bash", "-c", "python main.py; echo 'Bot exited. Sleeping...'; tail -f /dev/null"]
