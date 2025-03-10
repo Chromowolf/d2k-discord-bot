@@ -14,12 +14,13 @@ class TimeTracker(commands.Cog):
         self.CHANNEL_ID = TIME_CHANNEL_ID  # Must be int, not string!!!
         self.time_update.start()
 
-    async def send_or_update_embed(self, channel, embed):
+    async def send_or_update_embed(self, channel, embed, content=""):
         """Send a new message or update the latest bot message and delete older ones.
 
         Args:
             channel: The channel to send/update messages in
             embed: The embed to send
+            content: The message content to send
         """
         # Get all messages from the bot in this channel (limited to a reasonable amount)
         bot_messages = []
@@ -33,12 +34,7 @@ class TimeTracker(commands.Cog):
         else:
             # Update the most recent message
             latest_message = bot_messages[0]  # First message is the most recent
-            await latest_message.edit(embed=embed)
-
-            # Delete any older messages from the bot
-            if len(bot_messages) > 1:
-                for old_message in bot_messages[1:]:
-                    await old_message.delete()
+            await latest_message.edit(content=content, embed=embed)
 
     @tasks.loop(seconds=60)
     async def time_update(self):
