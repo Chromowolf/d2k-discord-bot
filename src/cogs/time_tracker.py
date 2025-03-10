@@ -64,55 +64,5 @@ class TimeTracker(commands.Cog):
         """Wait for the bot to be ready before starting the loop."""
         await self.bot.wait_until_ready()
 
-    # async def get_quote(self):
-    #     """Gets the quote of the day from the They Said So API."""
-    #     async with aiohttp.ClientSession() as session:
-    #         async with session.get('https://quotes.rest/qod') as resp:
-    #             if resp.status == 200:  # Checks if the request is successful
-    #                 qod = (await resp.json())['contents']['quotes'][0]['quote']
-    #                 author = (await resp.json())['contents']['quotes'][0]['author']
-    #                 return qod, author
-    #             return "Could not fetch quote of the day.", "Unknown"
-    #
-    #
-    # async def time_update_loop(self):
-    #     """Loop that sends time updates every minute."""
-    #     try:
-    #         # Wait for the bot to be ready before getting the channel
-    #         await self.client.wait_until_ready()
-    #
-    #         channel = self.client.get_channel(TIME_CHANNEL_ID)
-    #         if not channel:
-    #             logger.error(f"Could not find channel with ID {TIME_CHANNEL_ID}")
-    #             return
-    #
-    #         logger.info(f"Starting time updates in channel: {channel.name}")
-    #
-    #         while not self.client.is_closed():
-    #             # Get current Unix timestamp
-    #             current_timestamp = int(time.time())
-    #
-    #             # Create an embed for the timestamp
-    #             embed = discord.Embed(
-    #                 title="Current Time",
-    #                 description=f"<t:{current_timestamp}:F>",
-    #                 color=discord.Color.blue()
-    #             )
-    #             embed.set_footer(text=f"Timestamp: {current_timestamp}")
-    #
-    #             await channel.send(embed=embed)
-    #
-    #             # Calculate the delay until the next minute
-    #             now = datetime.datetime.now()
-    #             next_minute = now.replace(second=0, microsecond=0) + datetime.timedelta(minutes=1)
-    #             delay = (next_minute - now).total_seconds()
-    #
-    #             await asyncio.sleep(delay)
-    #
-    #     except asyncio.CancelledError:
-    #         logger.info("Time update task was cancelled")
-    #     except Exception as e:
-    #         logger.exception(f"Error in time update loop: {e}")
-
 async def setup(bot):
     await bot.add_cog(TimeTracker(bot), guild=guild)

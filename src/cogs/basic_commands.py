@@ -19,9 +19,9 @@ class BasicCommands(commands.Cog):
     # async def hello_command(self, interaction: discord.Interaction):
     #     await interaction.response.send_message(f"Hello, {interaction.user.mention}!")
 
-    @app_commands.command(name="hello1", description="Says hello1")
-    async def hello1(self, interaction):
-        await interaction.response.send_message(f"Hello again111!, {interaction.user.mention}!")
+    @app_commands.command(name="hello2", description="Says hello2")
+    async def hello2(self, interaction):
+        await interaction.response.send_message(f"Hello again222!, {interaction.user.mention}!")
 
     # @client.tree.command(name="hello4", description="Says hello (4)", guild=guild)
     # async def hello3(interaction):

@@ -1,13 +1,7 @@
 import discord
-# from discord import app_commands
 from discord.ext import commands
 import logging
 from config import D2K_SERVER_ID
-# import os
-
-# from cogs.basic_commands import setup_basic_commands
-# from cogs.execuses import setup_excuses
-# from cogs.time_tracker import setup_time_tracker
 
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
@@ -32,10 +26,6 @@ class MyClient(commands.Bot):
             logger.info(f"Loading extension {cog_name}")
             await self.load_extension(cog_name)
 
-        # setup_basic_commands(self)
-        # setup_excuses(self)
-
-        # The slash commands(app_command) must be synced!
         try:
             # Clear global commands first
             # self.tree.clear_commands(guild=None)
@@ -52,7 +42,6 @@ class MyClient(commands.Bot):
             logger.exception(f"Error syncing commands: {e}")
 
     async def on_ready(self):
-        # To be wrapped by other cogs
         logger.info(f'Logged in as {self.user}')
         logger.info('------')
 
