@@ -137,10 +137,12 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
                 return  # Exit on unexpected exceptions
 
         logger.critical("[IRC] Max reconnection attempts reached. Giving up.")
+        self.stop()
 
     def stop(self):
         """Gracefully disconnects from IRC."""
         if self.registered:
+            self.irc_ready_event.clear()
             logger.info("[IRC] Disconnecting from server...")
             self.connection.disconnect("Bot shutting down.")
 
