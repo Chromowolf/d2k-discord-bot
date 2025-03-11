@@ -27,7 +27,8 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
         self.nickname = nickname
         self.channel = channel
         self.channel_key = channel_key
-        self.dune2000_players: list[str] = []
+        self.dune2000_players: list[list[str]] = []
+        self.dune2000_players_backup: list[list[str]] = []  # Backup player list
         self.who_event = asyncio.Event()  # Event to signal WHO completion
         self.irc_ready_event = asyncio.Event()  # New event to track IRC readiness (after joining the channel)
         self.registered = False  # connected
@@ -92,16 +93,20 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
         logger.debug("[IRC] send_who is called!")
         if self.registered:
             logger.debug(f"[IRC] Sending WHO request to {self.channel}")
+
+            self.dune2000_players_backup = self.dune2000_players.copy()  # Backup current player list before clearing
             self.dune2000_players.clear()  # Reset player list before new WHO request
             self.who_event.clear()  # Reset event before requesting WHO
             self.connection.who(self.channel)
 
-    async def get_players(self, timeout=10) -> list[str]:
+    async def get_players(self, timeout=10) -> list[list[str]]:
         """Waits for WHO response asynchronously and returns the list of players."""
         try:
             await asyncio.wait_for(self.who_event.wait(), timeout=timeout)
         except asyncio.TimeoutError:
             logger.error("[IRC] WHO query timed out.")
+            # Restore from backup on timeout
+            self.dune2000_players = self.dune2000_players_backup.copy()
         return self.dune2000_players
 
     def run(self):
@@ -212,7 +217,7 @@ class IRCCog(commands.Cog):
             current_timestamp = int(time.time())
             if players:
                 # sorted_player_list = sorted(players, key=str.lower)  # Unexpected type(s):(list[str]...
-                sorted_player_list = sorted(players, key=lambda s: s.lower())
+                sorted_player_list = sorted(players, key=lambda s: s[4].lower())
                 # Escape each player's name
                 escaped_players_with_status = [
                     ":green_circle: " + escape_discord_formatting(player[4]) if "H" in player[5] else
