@@ -24,9 +24,9 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
         self.dune2000_players: list[str] = []
         self.who_event = asyncio.Event()  # Event to signal WHO completion
         self.irc_ready_event = asyncio.Event()  # New event to track IRC readiness (after joining the channel)
-        self.registered = False
+        self.registered = False  # connected
         self.join_attempted = False
-        self.join_successful = False
+        self.join_successful = False  # equivalent to self.irc_ready_event.is_set()
 
         # Prevent UnicodeDecodeError by replacing unrecognized characters
         irc.client.ServerConnection.buffer_class.errors = "replace"
@@ -99,13 +99,38 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
         return self.dune2000_players
 
     def run(self):
-        """Connects to the IRC server and starts the reactor loop."""
+        """Connects to the IRC server and starts the reactor loop with a reconnection strategy."""
         logger.info(f"[IRC] Connecting to {self.server}:{self.port} as {self.nickname}")
-        try:
-            self.connect(self.server, self.port, self.nickname)
-            self.start()  # This runs process_forever() internally, creating an event loop
-        except Exception as e:
-            logger.exception(f"[IRC] Error occurred while runing: {e}")
+
+        max_retries = 150
+        base_wait_time = 1  # Start with 1 second and exponentially increase
+        max_wait_time = 4000
+        attempt = 0
+
+        while attempt < max_retries:  # Stop after 10 failed attempts
+            try:
+                self.irc_ready_event.clear()  # Mark as unready before attempting connection
+                self.registered = False
+                self.join_successful = False
+                self.connect(self.server, self.port, self.nickname)
+                attempt = 0  # Reset retry count since we successfully connected
+                self.start()  # This blocks until the connection is lost
+
+                # If we exit self.start(), it means we were disconnected.
+            except irc.client.ServerConnectionError as e:
+                if not self.registered:
+                    logger.warning(f"[IRC] Connection attempt {attempt + 1}/{max_retries} failed: {e}")
+                else:
+                    logger.warning(f"[IRC] Connection lost: {e}")
+                wait_time = min(base_wait_time * (2 ** attempt), max_wait_time)  # Exponential backoff with max wait time
+                logger.warning(f"[IRC] Attempting reconnect in {wait_time} seconds.")
+                time.sleep(wait_time)  # Wait before retrying
+                attempt += 1
+            except Exception as e:
+                logger.exception(f"[IRC] Unexpected error occurred, existing event loop. {e}")
+                return  # Exit on unexpected exceptions
+
+        logger.critical("[IRC] Max reconnection attempts reached. Giving up.")
 
     def stop(self):
         """Gracefully disconnects from IRC."""
