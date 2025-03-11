@@ -74,7 +74,7 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
         except UnicodeDecodeError as e:
             logger.warning(f"[IRC] Unicode decode error in WHO reply: {e}")
         except Exception as e:
-            logger.error(f"[IRC] Error processing WHO reply: {e}")
+            logger.exception(f"[IRC] Error processing WHO reply: {e}")
 
     def on_endofwho(self, _, __):
         """Marks WHO request completion."""
@@ -105,7 +105,7 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
             self.connect(self.server, self.port, self.nickname)
             self.start()  # This runs process_forever() internally, creating an event loop
         except Exception as e:
-            logger.error(f"[IRC] Error occurred while runing: {e}")
+            logger.exception(f"[IRC] Error occurred while runing: {e}")
 
     def stop(self):
         """Gracefully disconnects from IRC."""
