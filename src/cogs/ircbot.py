@@ -74,9 +74,9 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
         try:
             line = event.arguments
             if len(line) > 0 and "3 1.40 d2" in line[-1]:  # Identify Dune 2000 players
-                player_name = line[4]
+                # player_name = line[4]
                 # country_code = line[2] or "??"
-                self.dune2000_players.append(player_name)
+                self.dune2000_players.append(line)
         except UnicodeDecodeError as e:
             logger.warning(f"[IRC] Unicode decode error in WHO reply: {e}")
         except Exception as e:
@@ -120,7 +120,7 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
                 self.join_successful = False
                 self.connect(self.server, self.port, self.nickname)
                 attempt = 0  # Reset retry count since we successfully connected
-                self.start()  # This blocks until the connection is lost
+                self.start()  # This blocks until the connection is lost. (Event loop)
 
                 # If we exit self.start(), it means we were disconnected.
             except irc.client.ServerConnectionError as e:
@@ -214,17 +214,21 @@ class IRCCog(commands.Cog):
                 # sorted_player_list = sorted(players, key=str.lower)  # Unexpected type(s):(list[str]...
                 sorted_player_list = sorted(players, key=lambda s: s.lower())
                 # Escape each player's name
-                escaped_players = [escape_discord_formatting(player) for player in sorted_player_list]
+                escaped_players_with_status = [
+                    ":green_circle: " + escape_discord_formatting(player[4]) if "H" in player[5] else
+                    ":red_circle: " + escape_discord_formatting(player[4])
+                    for player in sorted_player_list
+                ]
 
                 embed = discord.Embed(
-                    title=f"{len(escaped_players)} PLAYERS ONLINE :globe_with_meridians:",
-                    description="\n".join(escaped_players),
+                    title=f"{len(escaped_players_with_status)} PLAYERS ONLINE :globe_with_meridians:",
+                    description="\n".join(escaped_players_with_status),
                     color=discord.Color.blue()
                 )
             else:
                 embed = discord.Embed(
-                    title=f"NO PLAYERS ONLINE :globe_with_meridians:",
-                    description="",
+                    title=f"NO PLAYERS ONLINE :angry:",
+                    description=":sleeping::zzz::cricket::cactus:",
                     color=discord.Color.blue()
                 )
             embed.add_field(name="Last Updated", value=f"<t:{current_timestamp}:F>", inline=False)
