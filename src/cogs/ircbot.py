@@ -12,6 +12,12 @@ from config import PLAYER_ONLINE_CHANNEL_ID, CNCNET_CHANNEL_KEY
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
+def escape_discord_formatting(text: str) -> str:
+    """Escape characters that trigger Discord's Markdown formatting."""
+    special_chars = "\\*_`~|"
+    return "".join(f"\\{char}" if char in special_chars else char for char in text)
+
 class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
     def __init__(self, server, port, nickname, channel, channel_key=None):
         super().__init__()
@@ -205,9 +211,12 @@ class IRCCog(commands.Cog):
             if players:
                 # sorted_player_list = sorted(players, key=str.lower)  # Unexpected type(s):(list[str]...
                 sorted_player_list = sorted(players, key=lambda s: s.lower())
+                # Escape each player's name
+                escaped_players = [escape_discord_formatting(player) for player in sorted_player_list]
+
                 embed = discord.Embed(
-                    title=f"{len(sorted_player_list)} PLAYERS ONLINE :globe_with_meridians:",
-                    description="\n".join(sorted_player_list),
+                    title=f"{len(escaped_players)} PLAYERS ONLINE :globe_with_meridians:",
+                    description="\n".join(escaped_players),
                     color=discord.Color.blue()
                 )
             else:
@@ -216,7 +225,7 @@ class IRCCog(commands.Cog):
                     description="",
                     color=discord.Color.blue()
                 )
-            embed.add_field(name="", value=f"Last updated: <t:{current_timestamp}:F>", inline=False)
+            embed.add_field(name="Last Updated", value=f"<t:{current_timestamp}:F>", inline=False)
             await self.send_or_update_embed(channel, embed)
             # if players:
             #     player_list = "\n".join(players)
