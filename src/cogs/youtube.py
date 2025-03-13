@@ -36,6 +36,7 @@ class YouTubeCog(commands.Cog):
         self.youtube_channels = load_youtube_channels()  # Load channels on startup
 
     @app_commands.command(name="youtube", description="Displays the YouTube channels of the players.")
+    @app_commands.checks.cooldown(1, 60, key=lambda i: (i.guild_id, i.user.id))
     async def youtube(self, interaction):
         if not self.youtube_channels:
             await interaction.response.send_message("No YouTube channels found.", ephemeral=True)
@@ -52,14 +53,14 @@ class YouTubeCog(commands.Cog):
         )
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="addytchannel", description="Adds a YouTube channel for a player.")
+    @app_commands.command(name="addytchannel", description="[Admin only] Adds a YouTube channel for a player.")
     @app_commands.check(is_creator)
     async def addytchannel(self, interaction, player_name: str, url: str):
         self.youtube_channels[player_name] = url
         save_youtube_channels(self.youtube_channels)
         await interaction.response.send_message(f"✅ Added YouTube channel for **{player_name}**.", ephemeral=True)
 
-    @app_commands.command(name="removeytchannel", description="Removes a YouTube channel from the list.")
+    @app_commands.command(name="removeytchannel", description="[Admin only] Removes a YouTube channel from the list.")
     @app_commands.check(is_creator)
     async def removeytchannel(self, interaction, player_name: str):
         if player_name in self.youtube_channels:
