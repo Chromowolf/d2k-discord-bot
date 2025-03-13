@@ -272,7 +272,11 @@ class IRCCog(commands.Cog):
                     color=discord.Color.blue()
                 )
             embed.add_field(name="Last Updated", value=f"<t:{current_timestamp}:F>", inline=False)
-            await self.send_or_update_embed(channel, embed)
+            try:
+                await self.send_or_update_embed(channel, embed)
+            except Exception as e:
+                # Handle discord.errors.DiscordServerError
+                logger.exception(f"Failed to update players online to discord channel {channel}: {e}. Skipping update.")
         else:
             logger.error(f"Channel with ID {self.CHANNEL_ID} not found.")
 
