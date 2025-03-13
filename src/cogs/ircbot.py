@@ -152,10 +152,12 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
             try:
                 self.reset_status()
 
-                # connect() is non-blocking, need process_once() to proceed connection
-                # It may generate irc.client.ServerConnectionError if connection error
-                self.connect(self.server, self.port, self.nickname)  # Non-blocking, but could generate
-                logger.info("Proceeding IRC connection, waiting for registration.")
+                logger.info(f"Connecting to {self.server} as {self.nickname}...")
+                # connect() is blocking when setting up connection,
+                # it may generate irc.client.ServerConnectionError if connection error occurrs at this stage.
+                # but it's non-blocking before resgistering, need process_once() to proceed connection.
+                self.connect(self.server, self.port, self.nickname)
+                logger.info("IRC connection set up, waiting for registration.")
                 attempt = 0  # Reset retry count since we successfully connected
 
                 # This event loop breaks in the following cases:
