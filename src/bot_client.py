@@ -16,7 +16,6 @@ class MyClient(commands.Bot):
         self.cogs_list = [
             "basic_commands",
             "excuses",
-            "time_tracker",
             "ircbot",
         ]
 
