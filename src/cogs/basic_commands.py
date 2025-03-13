@@ -2,11 +2,12 @@ import logging
 import discord
 from discord.ext import commands
 from discord import app_commands
-from config import D2K_SERVER_ID
-from utils.command_checks import is_bot, is_creator
+from config import D2K_SERVER_ID, PLAYER_ONLINE_CHANNEL_ID
+# from utils.command_checks import is_creator
 
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
+
 
 class BasicCommands(commands.Cog):
     """
@@ -16,15 +17,28 @@ class BasicCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="hello2d2k", description="Says hello2")
-    @app_commands.check(is_bot)
-    @app_commands.checks.cooldown(3, 60, key=lambda i: (i.guild_id, i.user.id))
-    async def hello2(self, interaction):
-        await interaction.response.send_message(f"Hello again222!, {interaction.user.mention}!")
+    # @app_commands.command(name="hello2d2k", description="Says hello2")
+    # @app_commands.check(is_bot)
+    # @app_commands.checks.cooldown(3, 60, key=lambda i: (i.guild_id, i.user.id))
+    # async def hello2(self, interaction):
+    #     await interaction.response.send_message(f"Hello again222!, {interaction.user.mention}!")
+    #
+    # # @client.tree.command(name="hello4", description="Says hello (4)", guild=guild)
+    # # async def hello3(interaction):
+    # #     await interaction.response.send_message(f"Hello4, {interaction.user.mention}!")
 
-    # @client.tree.command(name="hello4", description="Says hello (4)", guild=guild)
-    # async def hello3(interaction):
-    #     await interaction.response.send_message(f"Hello4, {interaction.user.mention}!")
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        channel = member.guild.system_channel
+        if channel is not None:
+            await channel.send(
+                f"Welcome {member.mention} to the spice-filled sands of our Dune 2000 server!\n"
+                f"Consider familiarising yourself with the build order for better team game experiences: "
+                f"[Tutorial Video](https://www.youtube.com/watch?v=4sUHYgLlbiw)\n"
+                f"You can also check who is currently online on CnCNet in this channel: "
+                f"https://discord.com/channels/{D2K_SERVER_ID}/{PLAYER_ONLINE_CHANNEL_ID}\n"
+                f"For further information about bot commands, type slash \"/\""
+            )
 
     @app_commands.command(name="install", description="How to install Dune2000.")
     @app_commands.checks.cooldown(1, 60, key=lambda i: (i.guild_id, i.user.id))
@@ -72,39 +86,6 @@ class BasicCommands(commands.Cog):
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/1218913633166430231/1224407535717449899/25252.png?ex=661d6160&is=660aec60&hm=c82040d5b680155d23e5f5f51f210d60bc02732482657a3a4681f74ffbd4c504&=&format=webp&quality=lossless")  # Replace with your image URL
 
-        await interaction.response.send_message(embed=embed)
-
-    # @client.tree.command(name="embed", description="Sends an example embed message", guild=guild)
-    @app_commands.command(name="embedd2k", description="Sends an example embed message")
-    @app_commands.check(is_creator)
-    @app_commands.checks.cooldown(3, 60, key=lambda i: (i.guild_id, i.user.id))
-    async def embed_example(self, interaction):
-        # Create an embed object
-        embed = discord.Embed(
-            title="Example Embed",
-            description="This is an example of an embed message in Discord",
-            color=discord.Color.blue()  # Sets a color for the embed's left border
-        )
-
-        # Add author information with an icon
-        embed.set_author(name=interaction.user.display_name, icon_url=interaction.user.display_avatar.url)
-
-        # Add fields to the embed (name, value, inline)
-        embed.add_field(name="Field 1", value="This is the first field", inline=False)
-        embed.add_field(name="Field 2", value="This is the second field", inline=True)
-        embed.add_field(name="Field 3", value="This is the third field", inline=True)
-
-        # Add a thumbnail image (small image in the top right)
-        embed.set_thumbnail(url=interaction.guild.icon.url if interaction.guild.icon else None)
-
-        # Add a larger image
-        # embed.set_image(url="https://example.com/image.png")
-
-        # Add a footer with an icon
-        embed.set_footer(text="Sent at " + discord.utils.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
-                         icon_url=self.bot.user.display_avatar.url)
-
-        # Send the embed
         await interaction.response.send_message(embed=embed)
 
     # handle errors together
