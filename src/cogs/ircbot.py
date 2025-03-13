@@ -11,6 +11,7 @@ from config import PLAYER_ONLINE_CHANNEL_ID, CNCNET_CHANNEL_KEY
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+# logger.setLevel(logging.DEBUG)
 
 
 def escape_discord_formatting(text: str) -> str:
@@ -27,33 +28,50 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
         self.nickname = nickname
         self.channel = channel
         self.channel_key = channel_key
-        self.dune2000_players: list[list[str]] = []
-        self.dune2000_players_backup: list[list[str]] = []  # Backup player list
-        self.who_event = asyncio.Event()  # Event to signal WHO completion
-        self.irc_ready_event = asyncio.Event()  # New event to track IRC readiness (after joining the channel)
-        self.registered = False  # connected
-        self.join_attempted = False
-        self.join_successful = False  # equivalent to self.irc_ready_event.is_set()
+
+        self.running = False  # To control the main event loop
+
+        # Status variables:
+        # self.is_connected  # should use self.connection.is_connected()
+        self.registered = False  # Set to true when on_welcome, which happens after client.connection.is_connected()
+        self.ready_for_who = False  # Equivalent to: joined channel
+        self.first_who_completed = False  # At least 1 WHO request succeeded
+
+        # Last disconn:
+        self.last_disconnect_time = time.time()
+
+        # Players info
+        self._dune2000_players: list[list[str]] = []  # Set to dune2000_players_new_round on end_of_who
+        self._dune2000_players_new_round: list[list[str]] = []  # Initiated when sending WHO request
 
         # Prevent UnicodeDecodeError by replacing unrecognized characters
         irc.client.ServerConnection.buffer_class.errors = "replace"
 
+    def reset_status(self):
+        self.registered = False
+        self.ready_for_who = False
+        self.first_who_completed = False
+
     def on_welcome(self, connection, _):
-        """Handles successful connection to IRC."""
+        """
+        Handles successful connection to IRC.
+        Called by the event loop of the IRC client thread
+        """
         logger.info(f"[IRC] Connected as {self.nickname}. Joining channel {self.channel}")
         self.registered = True
         if self.channel_key:
             connection.join(self.channel, self.channel_key)
         else:
             connection.join(self.channel)
-        self.join_attempted = True
 
     def on_join(self, _, event):
-        """Handles successful channel join."""
+        """
+        Handles successful channel join.
+        Called by the event loop of the IRC client thread
+        """
         if event.source.nick == self.nickname:
             logger.info(f"[IRC] Joined {self.channel}")
-            self.join_successful = True
-            self.irc_ready_event.set()  # Notify the Discord bot that IRC is ready
+            self.ready_for_who = True
 
     def on_nosuchchannel(self, connection, _):
         logger.info(f"[IRC] Channel {self.channel} does not exist.")
@@ -77,7 +95,7 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
             if len(line) > 0 and "3 1.40 d2" in line[-1]:  # Identify Dune 2000 players
                 # player_name = line[4]
                 # country_code = line[2] or "??"
-                self.dune2000_players.append(line)
+                self._dune2000_players_new_round.append(line)
         except UnicodeDecodeError as e:
             logger.warning(f"[IRC] Unicode decode error in WHO reply: {e}")
         except Exception as e:
@@ -86,48 +104,67 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
     def on_endofwho(self, _, __):
         """Marks WHO request completion."""
         logger.debug("[IRC] WHO query completed.")
-        self.who_event.set()  # Notify waiting coroutines that WHO is complete
+        self._dune2000_players = self._dune2000_players_new_round.copy()
+        self.first_who_completed = True
 
     def send_who(self):
-        """Requests the WHO list."""
+        """
+        Requests the WHO list.
+        Called by other threads, so need to handle exceptions here!
+        """
         logger.debug("[IRC] send_who is called!")
-        if self.registered:
-            logger.debug(f"[IRC] Sending WHO request to {self.channel}")
+        if not self.ready_for_who:
+            logger.debug("[IRC] send_who is called, but the client is not ready (haven't joined channel yet).")
+            return
 
-            self.dune2000_players_backup = self.dune2000_players.copy()  # Backup current player list before clearing
-            self.dune2000_players.clear()  # Reset player list before new WHO request
-            self.who_event.clear()  # Reset event before requesting WHO
-            self.connection.who(self.channel)
-
-    async def get_players(self, timeout=10) -> list[list[str]]:
-        """Waits for WHO response asynchronously and returns the list of players."""
         try:
-            await asyncio.wait_for(self.who_event.wait(), timeout=timeout)
-        except asyncio.TimeoutError:
-            logger.error("[IRC] WHO query timed out.")
-            # Restore from backup on timeout
-            self.dune2000_players = self.dune2000_players_backup.copy()
-        return self.dune2000_players
+            logger.debug(f"[IRC] Sending WHO request to {self.channel}")
+            self._dune2000_players_new_round.clear()  # Reset player list before new WHO request
+            self.connection.who(self.channel)
+        except irc.client.ServerConnectionError as e:
+            logger.error(f"[IRC] Connection lost when sending WHO request: {e}")
+        except Exception as e:
+            logger.exception(f"[IRC] Unexpected error occurred when sending WHO request: {e}")
 
-    def run(self):
-        """Connects to the IRC server and starts the reactor loop with a reconnection strategy."""
-        logger.info(f"[IRC] Connecting to {self.server}:{self.port} as {self.nickname}")
+    def get_players(self):
+        return self._dune2000_players
 
-        max_retries = 150
+    def on_disconnect(self, _, __):
+        self.last_disconnect_time = time.time()
+        logger.error("[IRC] Disconnected from server.")
+
+    def connect_and_run(self):
+        """
+        Starts the connection and runs the event loop, ensuring reconnection if disconnected.
+        This must be called in a separate thread!
+        The thread ends when self.running becomes False
+        """
+        self.running = True
         base_wait_time = 1  # Start with 1 second and exponentially increase
-        max_wait_time = 4000
+        max_wait_time = 3600  # 1 hour
+        max_retries = 30 * 86400 // max_wait_time  # 30 days (720 times)
         attempt = 0
-
-        while attempt < max_retries:  # Stop after 10 failed attempts
+        while self.running:  # Stop after centain failed attempts
+            if attempt >= max_retries:
+                logger.critical("[IRC] Max reconnection attempts reached. Terminating thread...")
+                self.stop()  # self.running is set to False inside stop()
+                continue
             try:
-                self.irc_ready_event.clear()  # Mark as unready before attempting connection
-                self.registered = False
-                self.join_successful = False
-                self.connect(self.server, self.port, self.nickname)
-                attempt = 0  # Reset retry count since we successfully connected
-                self.start()  # This blocks until the connection is lost. (Event loop)
+                self.reset_status()
 
-                # If we exit self.start(), it means we were disconnected.
+                # connect() is non-blocking, need process_once() to proceed connection
+                # It may generate irc.client.ServerConnectionError if connection error
+                self.connect(self.server, self.port, self.nickname)  # Non-blocking, but could generate
+                logger.info("Proceeding IRC connection, waiting for registration.")
+                attempt = 0  # Reset retry count since we successfully connected
+
+                # This event loop breaks in the following cases:
+                # (1) connection lost: client.connection.is_connected() is False
+                # (2) IRC client manually stopped
+                # (3) (Very rare) Connection lost when calling "join", raised irc.client.ServerConnectionError
+                # (4) (Very rare) raised other exceptions
+                self.start_event_loop()
+                logger.info("IRC client's event loop gracefully exited.")
             except irc.client.ServerConnectionError as e:
                 if not self.registered:
                     logger.warning(f"[IRC] Connection attempt {attempt + 1}/{max_retries} failed: {e}")
@@ -138,18 +175,30 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
                 time.sleep(wait_time)  # Wait before retrying
                 attempt += 1
             except Exception as e:
-                logger.exception(f"[IRC] Unexpected error occurred, existing event loop. {e}")
-                return  # Exit on unexpected exceptions
+                logger.exception(f"[IRC] Unexpected error occurred, Attempting reconnect. {e}")
+        logger.info("IRC client stopped. Thread terminated.")
 
-        logger.critical("[IRC] Max reconnection attempts reached. Giving up.")
-        self.stop()
+    def start_event_loop(self):
+        """Runs the IRC event loop, breaks if disconnected."""
+        while self.running:
+            if self.connection.is_connected():
+                self.reactor.process_once(0.1)
+                time.sleep(0.1)  # Prevent CPU overuse. (Unnecessary?)
+            else:
+                logger.error("[IRC] Connection lost. Exiting event loop...")
+                return
+        logger.error("[IRC] Client not running. Exiting event loop...")
 
     def stop(self):
-        """Gracefully disconnects from IRC."""
-        if self.registered:
-            self.irc_ready_event.clear()
-            logger.info("[IRC] Disconnecting from server...")
-            self.connection.disconnect("Bot shutting down.")
+        """Gracefully stops the IRC client."""
+        logger.info("Stopping IRC client.")
+        if self.connection.is_connected():
+            logger.info("Quitting IRC session.")
+            self.connection.quit("Shutting down")
+        else:
+            logger.info("IRC session is not connected anyway.")
+        self.reset_status()
+        self.running = False  # This will terminate the "connect_and_run" thread
 
 
 class IRCCog(commands.Cog):
@@ -158,25 +207,77 @@ class IRCCog(commands.Cog):
         self.irc_client = Dune2000PlayerMonitor(
             server="irc.gamesurge.net",
             port=6667,
-            # nickname="[D2K]Bot",
             nickname="D2kPlayerMonitor",
             channel="#cncnet",
             channel_key=CNCNET_CHANNEL_KEY
         )
 
-        # Note that the following 2 lines are supposed to be in bot.on_ready
-        # but too lazy to implement the wrapper.
-        # Currently, it sets up the irc thread when the cog is loaded, before the Discord bot is connected.
-        self.irc_thread = threading.Thread(target=self.irc_client.run, daemon=True)
-        self.irc_thread.start()  # Start IRC in a separate thread
-
+        self.irc_thread = threading.Thread(target=self.irc_client.connect_and_run, daemon=True)
+        self.irc_thread.start()
         self.CHANNEL_ID = PLAYER_ONLINE_CHANNEL_ID
         self.who_task.start()  # Start periodic WHO queries
+        self.print_players_to_discord.start()  # Start print player list
 
     def cog_unload(self):
         """Stops tasks and disconnects IRC when cog is unloaded."""
+        logger.info("unloading IRCCog")
         self.who_task.cancel()
-        self.irc_client.stop()  # Use stop() instead of nonexistent disconnect()
+        self.irc_client.stop()  # Can also terminate the irc_thread
+
+    @tasks.loop(seconds=10)
+    async def who_task(self):
+        """Requests WHO list and sends results to Discord."""
+        logger.debug("[Cog] who_task is called!")
+        if not self.irc_client.ready_for_who:
+            logger.debug("[Cog] who_task is called, but the IRC client is not ready (haven't joined channel yet).")
+            return
+        # Make it a different thread because the send_who can be blocking for several seconds when connection lost
+        # The send_who is not blocking when IRC is connected
+        asyncio.create_task(asyncio.to_thread(self.irc_client.send_who))
+
+    @who_task.before_loop
+    async def before_who_task(self):
+        """Waits for the bot and IRC connection before running the task."""
+        await self.bot.wait_until_ready()
+        logger.info("[Discord] Bot is ready, starting WHO task!")
+
+    @tasks.loop(seconds=20)
+    async def print_players_to_discord(self):
+        if not self.irc_client.first_who_completed:
+            logger.debug("IRC client is not ready for providing player list.")
+            return
+        players = self.irc_client.get_players()
+        channel = self.bot.get_channel(self.CHANNEL_ID)
+        if channel:
+            current_timestamp = int(time.time())
+            if players:
+                sorted_player_list = sorted(players, key=lambda s: s[4].lower())
+                escaped_players_with_status = [
+                    ":green_circle: " + escape_discord_formatting(player[4]) if "H" in player[5] else
+                    ":red_circle: " + escape_discord_formatting(player[4])
+                    for player in sorted_player_list
+                ]
+
+                embed = discord.Embed(
+                    title=f"{len(escaped_players_with_status)} PLAYERS ONLINE :globe_with_meridians:",
+                    description="\n".join(escaped_players_with_status),
+                    color=discord.Color.blue()
+                )
+            else:
+                embed = discord.Embed(
+                    title=f"NO PLAYERS ONLINE :rage:",
+                    description=":sleeping::zzz::cricket::cactus:",
+                    color=discord.Color.blue()
+                )
+            embed.add_field(name="Last Updated", value=f"<t:{current_timestamp}:F>", inline=False)
+            await self.send_or_update_embed(channel, embed)
+        else:
+            logger.error(f"Channel with ID {self.CHANNEL_ID} not found.")
+
+    @print_players_to_discord.before_loop
+    async def before_print_players_to_discord(self):
+        """Waits for the bot and IRC connection before running the task."""
+        await self.bot.wait_until_ready()
 
     async def send_or_update_embed(self, channel, embed, content=""):
         """Send a new message or update the latest bot message and delete older ones.
@@ -199,61 +300,6 @@ class IRCCog(commands.Cog):
             # Update the most recent message
             latest_message = bot_messages[0]  # First message is the most recent
             await latest_message.edit(content=content, embed=embed)
-
-    @tasks.loop(seconds=20)
-    async def who_task(self):
-        """Requests WHO list and sends results to Discord."""
-        # Ensure that IRC is fully connected before sending WHO
-        if not self.irc_client.irc_ready_event.is_set():
-            logger.info("[IRC] Waiting for IRC connection before sending WHO requests...")
-            await self.irc_client.irc_ready_event.wait()  # Wait until IRC is ready
-
-        await asyncio.to_thread(self.irc_client.send_who)  # Send WHO request
-        players = await self.irc_client.get_players(timeout=15)  # Wait for response
-
-        channel = self.bot.get_channel(self.CHANNEL_ID)
-        if channel:
-            # Get current Unix timestamp
-            current_timestamp = int(time.time())
-            if players:
-                # sorted_player_list = sorted(players, key=str.lower)  # Unexpected type(s):(list[str]...
-                sorted_player_list = sorted(players, key=lambda s: s[4].lower())
-                # Escape each player's name
-                escaped_players_with_status = [
-                    ":green_circle: " + escape_discord_formatting(player[4]) if "H" in player[5] else
-                    ":red_circle: " + escape_discord_formatting(player[4])
-                    for player in sorted_player_list
-                ]
-
-                embed = discord.Embed(
-                    title=f"{len(escaped_players_with_status)} PLAYERS ONLINE :globe_with_meridians:",
-                    description="\n".join(escaped_players_with_status),
-                    color=discord.Color.blue()
-                )
-            else:
-                embed = discord.Embed(
-                    title=f"NO PLAYERS ONLINE :angry:",
-                    description=":sleeping::zzz::cricket::cactus:",
-                    color=discord.Color.blue()
-                )
-            embed.add_field(name="Last Updated", value=f"<t:{current_timestamp}:F>", inline=False)
-            await self.send_or_update_embed(channel, embed)
-            # if players:
-            #     player_list = "\n".join(players)
-            #     await channel.send(f"**Dune 2000 Players Online:**\n{player_list}")
-            # else:
-            #     await channel.send("No Dune 2000 players found online.")
-        else:
-            logger.error(f"Channel with ID {self.CHANNEL_ID} not found.")
-
-    @who_task.before_loop
-    async def before_who_task(self):
-        """Waits for the bot and IRC connection before running the task."""
-        await self.bot.wait_until_ready()
-        logger.info("[Discord] Bot is ready, now waiting for IRC connection...")
-
-        await self.irc_client.irc_ready_event.wait()  # Wait for IRC connection
-        logger.info("[IRC] IRC is ready, starting WHO task!")
 
 
 # Cog setup function
