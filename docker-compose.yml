@@ -1,5 +1,5 @@
 services:
-  discord-bot:
+  discord-d2kbot:
     build: .
     env_file:
       - .env

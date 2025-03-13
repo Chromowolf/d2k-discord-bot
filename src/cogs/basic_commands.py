@@ -19,7 +19,7 @@ class BasicCommands(commands.Cog):
     # async def hello_command(self, interaction: discord.Interaction):
     #     await interaction.response.send_message(f"Hello, {interaction.user.mention}!")
 
-    @app_commands.command(name="hello2", description="Says hello2")
+    @app_commands.command(name="hello2d2k", description="Says hello2")
     async def hello2(self, interaction):
         await interaction.response.send_message(f"Hello again222!, {interaction.user.mention}!")
 
@@ -28,7 +28,7 @@ class BasicCommands(commands.Cog):
     #     await interaction.response.send_message(f"Hello4, {interaction.user.mention}!")
 
     # @client.tree.command(name="embed", description="Sends an example embed message", guild=guild)
-    @app_commands.command(name="embed", description="Sends an example embed message")
+    @app_commands.command(name="embedd2k", description="Sends an example embed message")
     async def embed_example(self, interaction):
         # Create an embed object
         embed = discord.Embed(
