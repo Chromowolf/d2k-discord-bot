@@ -17,6 +17,7 @@ class MyClient(commands.Bot):
             "basic_commands",
             "excuses",
             "ircbot",
+            "youtube",
         ]
 
     async def setup_hook(self):
