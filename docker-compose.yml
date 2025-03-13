@@ -1,5 +1,5 @@
 services:
-  discord-d2kbot:
+  pere-d2k:
     build: .
     env_file:
       - .env
