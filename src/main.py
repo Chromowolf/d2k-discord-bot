@@ -16,7 +16,7 @@ log_file = logs_dir / 'discord_app.log'
 logging.basicConfig(
     filename=log_file,  # Set a handler to the root logger
     level=logging.INFO,  # Set the level of the root logger to this, not handler. The handler's level is still NOTSET
-    format='%(asctime)s %(name)-10s %(levelname)-8s %(message)s',
+    format='%(asctime)s [%(name)-10s] [%(threadName)s] [%(levelname)-s] %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S %z'  # Add timezone info
 )
 
