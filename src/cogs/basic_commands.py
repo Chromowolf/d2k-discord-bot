@@ -15,11 +15,8 @@ class BasicCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # @app_commands.command(name="hello", description="Sends a hello message")
-    # async def hello_command(self, interaction: discord.Interaction):
-    #     await interaction.response.send_message(f"Hello, {interaction.user.mention}!")
-
     @app_commands.command(name="hello2d2k", description="Says hello2")
+    @app_commands.checks.cooldown(3, 60, key=lambda i: (i.guild_id, i.user.id))
     async def hello2(self, interaction):
         await interaction.response.send_message(f"Hello again222!, {interaction.user.mention}!")
 
@@ -57,6 +54,20 @@ class BasicCommands(commands.Cog):
 
         # Send the embed
         await interaction.response.send_message(embed=embed)
+
+    # handle errors together
+    async def cog_app_command_error(self, interaction, error: app_commands.AppCommandError):
+        if isinstance(error, app_commands.CommandOnCooldown):
+            response = f"You're on cooldown! Try again in {error.retry_after:.2f} seconds."
+        elif isinstance(error, app_commands.CheckFailure):  # Handles permission errors, etc.
+            response = "You don't have permission to use this command!"
+        else:
+            response = "An unknown error occurred."
+
+        if interaction.response.is_done():
+            await interaction.followup.send(response, ephemeral=True)
+        else:
+            await interaction.response.send_message(response, ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(BasicCommands(bot), guild=guild)
