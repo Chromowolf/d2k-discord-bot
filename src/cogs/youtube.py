@@ -35,7 +35,9 @@ class YouTubeCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.youtube_channels = load_youtube_channels()  # Load channels on startup
-        self.invoke_youtube_update_task.start()
+
+        # This is useless, because other bots by default ignore the command sent by any bot account
+        # self.invoke_youtube_update_task.start()
 
     @app_commands.command(name="youtube", description="Displays the YouTube channels of the players.")
     @app_commands.checks.cooldown(1, 60, key=lambda i: (i.guild_id, i.user.id))

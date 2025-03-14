@@ -46,6 +46,13 @@ class MyClient(commands.Bot):
         logger.info(f'Logged in as {self.user}')
         logger.info('------')
 
+    async def on_command_error(self, ctx, error):
+        if isinstance(error, commands.CommandNotFound):
+            # Silently ignore command not found errors (triggered by "!" user messages)
+            return
+        # Log other errors
+        logger.error(f"Command error: {error}")
+
 
 def create_client():
     """Factory function to create and configure a new client."""
