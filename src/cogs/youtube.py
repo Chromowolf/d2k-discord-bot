@@ -1,10 +1,11 @@
 import discord
 import logging
-from config import D2K_SERVER_ID
+from config import D2K_SERVER_ID, SEND_MESSAGE_CHANNEL_ID
 import json
 from discord import app_commands
-from discord.ext import commands
+from discord.ext import commands, tasks
 from utils.command_checks import is_creator
+from utils.discord_msg import send_a_message_then_delete
 import os
 
 logger = logging.getLogger(__name__)
@@ -69,6 +70,11 @@ class YouTubeCog(commands.Cog):
             await interaction.response.send_message(f"✅ Removed YouTube channel for **{player_name}**.", ephemeral=True)
         else:
             await interaction.response.send_message(f"❌ Player **{player_name}** not found.", ephemeral=True)
+
+    # Periodically invoke the other bot:
+    @tasks.loop(seconds=60)
+    async def print_a_message_task(self):
+        await send_a_message_then_delete(self.bot, SEND_MESSAGE_CHANNEL_ID, "!updateyt2000")
 
 async def setup(bot):
     await bot.add_cog(YouTubeCog(bot), guild=guild)

@@ -1,5 +1,6 @@
 import logging
 import discord
+import asyncio
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -32,3 +33,38 @@ async def send_or_update_embed(bot_user_id, channel, embed, content=""):
         logger.warning(f"HTTP error while sending/updating message: {e}")
     except Exception as e:
         logger.exception(f"Unexpected error while sending/updating message: {e}", exc_info=True)
+
+
+async def send_a_message_then_delete(bot, channel_id, message="Test message", delete_after=5):
+    """ Sends a message to a specified channel and deletes it after a delay. """
+    channel = bot.get_channel(channel_id)
+
+    if not channel:
+        logger.warning(f"Channel with ID {channel_id} not found.")
+        return
+
+    try:
+        sent_message = await channel.send(message)
+        logger.info(f"Sent message in {channel.name} (ID: {channel.id})")
+    except discord.Forbidden:
+        logger.error(f"Missing permissions to send messages in {channel.name} (ID: {channel.id})")
+        return
+    except discord.HTTPException as e:
+        logger.error(f"Failed to send message in {channel.name} (ID: {channel.id}): {e}")
+        return
+    except Exception as e:
+        logger.exception(f"Unexpected error when sending message in {channel.name} (ID: {channel.id}): {e}")
+        return
+
+    await asyncio.sleep(delete_after)  # Wait before deleting
+
+    try:
+        await sent_message.delete()
+        logger.info(f"Deleted message in {channel.name} (ID: {channel.id})")
+    except discord.Forbidden:
+        logger.error(f"Missing permissions to delete messages in {channel.name} (ID: {channel.id})")
+    except discord.HTTPException as e:
+        logger.error(f"Failed to delete message in {channel.name} (ID: {channel.id}): {e}")
+    except Exception as e:
+        logger.exception(f"Unexpected error when deleting message in {channel.name} (ID: {channel.id}): {e}")
+        return
