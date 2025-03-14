@@ -7,6 +7,7 @@ import random
 import time
 import logging
 from config import PLAYER_ONLINE_CHANNEL_ID, CNCNET_CHANNEL_KEY
+import utils.discord_msg as msg_helper
 
 
 logger = logging.getLogger(__name__)
@@ -272,11 +273,7 @@ class IRCCog(commands.Cog):
                     color=discord.Color.blue()
                 )
             embed.add_field(name="Last Updated", value=f"<t:{current_timestamp}:F>", inline=False)
-            try:
-                await self.send_or_update_embed(channel, embed)
-            except Exception as e:
-                # Handle discord.errors.DiscordServerError
-                logger.exception(f"Failed to update players online to discord channel {channel}: {e}. Skipping update.")
+            await msg_helper.send_or_update_embed(self.bot.user.id, channel, embed)
         else:
             logger.error(f"Channel with ID {self.CHANNEL_ID} not found.")
 
@@ -284,29 +281,6 @@ class IRCCog(commands.Cog):
     async def before_print_players_to_discord(self):
         """Waits for the bot and IRC connection before running the task."""
         await self.bot.wait_until_ready()
-
-    async def send_or_update_embed(self, channel, embed, content=""):
-        """Send a new message or update the latest bot message and delete older ones.
-
-        Args:
-            channel: The channel to send/update messages in
-            embed: The embed to send
-            content: The message content to send
-        """
-        # Get all messages from the bot in this channel (limited to a reasonable amount)
-        bot_messages = []
-        async for message in channel.history(limit=10):
-            if message.author.id == self.bot.user.id:
-                bot_messages.append(message)
-
-        if not bot_messages:
-            # No existing messages, send a new one
-            await channel.send(embed=embed)
-        else:
-            # Update the most recent message
-            latest_message = bot_messages[0]  # First message is the most recent
-            await latest_message.edit(content=content, embed=embed)
-
 
 # Cog setup function
 async def setup(bot):
