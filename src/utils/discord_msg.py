@@ -28,11 +28,11 @@ async def send_or_update_embed(bot_user_id, channel, embed, content=""):
             latest_message = bot_messages[0]  # First message is the most recent
             await latest_message.edit(content=content, embed=embed)
     except discord.errors.DiscordServerError as e:
-        logger.warning(f"Discord server error while sending/updating message: {e}")
+        logger.warning(f"Discord server error while sending/updating message in {channel.name} (ID: {channel.id}): {e}")
     except discord.errors.HTTPException as e:
-        logger.warning(f"HTTP error while sending/updating message: {e}")
+        logger.warning(f"HTTP error while sending/updating message in {channel.name} (ID: {channel.id}): {e}")
     except Exception as e:
-        logger.exception(f"Unexpected error while sending/updating message: {e}")
+        logger.exception(f"Unexpected error while sending/updating message in {channel.name} (ID: {channel.id}): {e}")
 
 
 async def send_a_message_then_delete(bot, channel_id, message="Test message", delete_after=5):
