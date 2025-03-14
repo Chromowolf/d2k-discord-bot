@@ -32,7 +32,7 @@ async def send_or_update_embed(bot_user_id, channel, embed, content=""):
     except discord.errors.HTTPException as e:
         logger.warning(f"HTTP error while sending/updating message: {e}")
     except Exception as e:
-        logger.exception(f"Unexpected error while sending/updating message: {e}", exc_info=True)
+        logger.exception(f"Unexpected error while sending/updating message: {e}")
 
 
 async def send_a_message_then_delete(bot, channel_id, message="Test message", delete_after=5):
@@ -45,7 +45,7 @@ async def send_a_message_then_delete(bot, channel_id, message="Test message", de
 
     try:
         sent_message = await channel.send(message)
-        logger.info(f"Sent message in {channel.name} (ID: {channel.id})")
+        logger.debug(f"Sent message in {channel.name} (ID: {channel.id})")
     except discord.Forbidden:
         logger.error(f"Missing permissions to send messages in {channel.name} (ID: {channel.id})")
         return
@@ -60,7 +60,7 @@ async def send_a_message_then_delete(bot, channel_id, message="Test message", de
 
     try:
         await sent_message.delete()
-        logger.info(f"Deleted message in {channel.name} (ID: {channel.id})")
+        logger.debug(f"Deleted message in {channel.name} (ID: {channel.id})")
     except discord.Forbidden:
         logger.error(f"Missing permissions to delete messages in {channel.name} (ID: {channel.id})")
     except discord.HTTPException as e:

@@ -35,6 +35,7 @@ class YouTubeCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.youtube_channels = load_youtube_channels()  # Load channels on startup
+        self.invoke_youtube_update_task.start()
 
     @app_commands.command(name="youtube", description="Displays the YouTube channels of the players.")
     @app_commands.checks.cooldown(1, 60, key=lambda i: (i.guild_id, i.user.id))
@@ -73,8 +74,13 @@ class YouTubeCog(commands.Cog):
 
     # Periodically invoke the other bot:
     @tasks.loop(seconds=60)
-    async def print_a_message_task(self):
+    async def invoke_youtube_update_task(self):
         await send_a_message_then_delete(self.bot, SEND_MESSAGE_CHANNEL_ID, "!updateyt2000")
+
+    @invoke_youtube_update_task.before_loop
+    async def before_invoke_youtube_update_task(self):
+        await self.bot.wait_until_ready()
+        logger.info("Start invoke_youtube_update task.")
 
 async def setup(bot):
     await bot.add_cog(YouTubeCog(bot), guild=guild)
