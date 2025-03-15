@@ -18,6 +18,7 @@ class MyClient(commands.Bot):
             "excuses",
             "ircbot",
             "youtube",
+            "detect_streaming",
         ]
 
     async def setup_hook(self):
