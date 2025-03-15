@@ -23,6 +23,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)  # Currently no handler for "__main__"
 logger.setLevel(logging.INFO)  # This level is for the logger itself, not handler.
 
+# Suppress INFO logs from 'discord.gateway' by setting its level to WARNING
+# Especially suppress "Shard ID None has successfully RESUMED session [session id]"
+logging.getLogger("discord.gateway").setLevel(logging.WARNING)
+
 if __name__ == "__main__":
     try:
         client = create_client()
