@@ -2,6 +2,7 @@ from pathlib import Path
 import logging
 from bot_client import create_client
 from config import DISCORD_TOKEN
+from datetime import datetime
 
 # Get the directory where the current script is located
 script_dir = Path(__file__).parent
@@ -10,8 +11,11 @@ script_dir = Path(__file__).parent
 logs_dir = script_dir / 'logs'
 logs_dir.mkdir(exist_ok=True)
 
-# Create the log file path with custom name
-log_file = logs_dir / 'discord_app.log'
+# Generate a timestamp for the log filename
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+# Create a unique log file for each run
+log_file = logs_dir / f'discord_app_{timestamp}.log'
 
 logging.basicConfig(
     filename=log_file,  # Set a handler to the root logger
