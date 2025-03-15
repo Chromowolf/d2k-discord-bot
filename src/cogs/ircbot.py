@@ -93,7 +93,8 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
         """Processes WHO replies to extract Dune 2000 players."""
         try:
             line = event.arguments
-            if len(line) > 0 and "3 1.40 d2" in line[-1]:  # Identify Dune 2000 players
+            # if len(line) > 0 and "3 1.40 d2" in line[-1]:  # Identify Dune 2000 players (old)
+            if len(line) > 0 and line[1].startswith("~2"):  # Identify Dune 2000 players (new)
                 # player_name = line[4]
                 # country_code = line[2] or "??"
                 self._dune2000_players_new_round.append(line)
@@ -255,12 +256,15 @@ class IRCCog(commands.Cog):
             current_timestamp = int(time.time())
             if players:
                 sorted_player_list = sorted(players, key=lambda s: s[4].lower())
-                escaped_players_with_status = [
-                    ":green_circle: " + escape_discord_formatting(player[4]) if "H" in player[5] else
-                    ":red_circle: " + escape_discord_formatting(player[4])
-                    for player in sorted_player_list
-                ]
-
+                escaped_players_with_status = []
+                for player_info in sorted_player_list:
+                    player_name_escaped = escape_discord_formatting(player_info[4])
+                    country_code = player_info[1][2:4]
+                    flag_emoji = ":pirate_flag:" if country_code == "--" else f":flag_{country_code.lower()}:"
+                    status_emoji = ":green_circle:" if "H" in player_info[5] else ":red_circle:"
+                    escaped_players_with_status.append(
+                        f"{status_emoji} {flag_emoji} {player_name_escaped}"
+                    )
                 embed = discord.Embed(
                     title=f"{len(escaped_players_with_status)} PLAYERS ONLINE :globe_with_meridians:",
                     description="\n".join(escaped_players_with_status),
