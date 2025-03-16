@@ -103,8 +103,8 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
         logger.info(f"[IRC] Switching to valid nickname format: {new_nick}")
         connection.nick(new_nick)
 
-    @staticmethod
-    def on_error(_, event):
+    # noinspection PyMethodMayBeStatic
+    def on_error(self, _, event):
         """
         General errors
         """
