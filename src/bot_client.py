@@ -13,13 +13,16 @@ class MyClient(commands.Bot):
         intents = discord.Intents.default()
         # intents = discord.Intents.all()
         intents.message_content = True
-        super().__init__(command_prefix="!", intents=intents)  # "!" is just a placeholder
+
+        # Added help_command=None to disable the default "!help" command
+        super().__init__(command_prefix="!", intents=intents, help_command=None)  # "!" is just a placeholder
         self.cogs_list = [
             "basic_commands",
             "excuses",
             "ircbot",
             "youtube",
             "detect_streaming",
+            "autoreaction",
         ]
 
     async def setup_hook(self):
