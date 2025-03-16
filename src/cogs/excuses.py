@@ -138,20 +138,20 @@ class Excuses(commands.Cog):
         await interaction.response.send_message(response)
 
     # handle errors together
-    async def cog_app_command_error(self, interaction, error: app_commands.AppCommandError):
-        if isinstance(error, app_commands.CommandOnCooldown):
-            response = f"You're on cooldown! Try again in {error.retry_after:.2f} seconds."
-        elif isinstance(error, app_commands.CheckFailure):  # Handles permission errors, etc.
-            response = "You don't have permission to use this command!"
-        else:
-            response = "An unknown error occurred."
-
-        # noinspection PyUnresolvedReferences
-        if interaction.response.is_done():
-            await interaction.followup.send(response, ephemeral=True)
-        else:
-            # noinspection PyUnresolvedReferences
-            await interaction.response.send_message(response, ephemeral=True)
+    # async def cog_app_command_error(self, interaction, error: app_commands.AppCommandError):
+    #     if isinstance(error, app_commands.CommandOnCooldown):
+    #         response = f"You're on cooldown! Try again in {error.retry_after:.2f} seconds."
+    #     elif isinstance(error, app_commands.CheckFailure):  # Handles permission errors, etc.
+    #         response = "You don't have permission to use this command!"
+    #     else:
+    #         response = "An unknown error occurred."
+    #
+    #     # noinspection PyUnresolvedReferences
+    #     if interaction.response.is_done():
+    #         await interaction.followup.send(response, ephemeral=True)
+    #     else:
+    #         # noinspection PyUnresolvedReferences
+    #         await interaction.response.send_message(response, ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(Excuses(bot), guild=guild)

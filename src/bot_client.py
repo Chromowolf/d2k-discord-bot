@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import logging
 from config import D2K_SERVER_ID
 
@@ -28,6 +29,9 @@ class MyClient(commands.Bot):
             logger.info(f"Loading extension {cog_name}")
             await self.load_extension(cog_name)
 
+        # Register global app command error handler
+        self.tree.error(self.app_command_error_handler)
+
         try:
             # Clear global commands first
             # self.tree.clear_commands(guild=None)
@@ -53,6 +57,27 @@ class MyClient(commands.Bot):
             return
         # Log other errors
         logger.error(f"Command error: {error}")
+
+    # Centralize all the "cog_app_command_error"
+    # noinspection PyMethodMayBeStatic
+    async def app_command_error_handler(
+            self, interaction: discord.Interaction, error: app_commands.AppCommandError
+    ) -> None:
+        """Global error handler for application commands"""
+        if isinstance(error, app_commands.CommandOnCooldown):
+            response = f"You're on cooldown! Try again in {error.retry_after:.2f} seconds."
+        elif isinstance(error, app_commands.CheckFailure):
+            response = "You don't have permission to use this command!"
+        else:
+            logger.error(f"App command error: {error}")
+            response = "An unknown error occurred."
+
+        # noinspection PyUnresolvedReferences
+        if interaction.response.is_done():
+            await interaction.followup.send(response, ephemeral=True)
+        else:
+            # noinspection PyUnresolvedReferences
+            await interaction.response.send_message(response, ephemeral=True)
 
 
 def create_client():
