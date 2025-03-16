@@ -46,7 +46,7 @@ class YouTubeCog(commands.Cog):
             await interaction.response.send_message("No YouTube channels found.", ephemeral=True)
             return
 
-        youtube_channel_list = [f"**{name}**: [link]({url})" for name, url in self.youtube_channels.items()]
+        youtube_channel_list = [f"[**{name}**]({url})" for name, url in self.youtube_channels.items()]
         embed = discord.Embed(
             title="Players YouTube Channels",
             description="\n".join(youtube_channel_list),
@@ -60,9 +60,13 @@ class YouTubeCog(commands.Cog):
     @app_commands.command(name="addytchannel", description="[Admin only] Adds a YouTube channel for a player.")
     @app_commands.check(is_creator)
     async def addytchannel(self, interaction, player_name: str, url: str):
+        update_player = player_name in self.youtube_channels  # if already exists, then update, else add
         self.youtube_channels[player_name] = url
         save_youtube_channels(self.youtube_channels)
-        await interaction.response.send_message(f"✅ Added YouTube channel for **{player_name}**.", ephemeral=True)
+        if update_player:
+            await interaction.response.send_message(f"✅ Updated YouTube channel for **{player_name}**: {url}", ephemeral=True)
+        else:
+            await interaction.response.send_message(f"✅ Added YouTube channel for **{player_name}**: {url}", ephemeral=True)
 
     @app_commands.command(name="removeytchannel", description="[Admin only] Removes a YouTube channel from the list.")
     @app_commands.check(is_creator)
