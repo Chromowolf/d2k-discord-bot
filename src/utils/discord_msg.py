@@ -16,16 +16,19 @@ async def send_or_update_embed(bot_user_id, channel, embed, content=""):
     # Get all messages from the bot in this channel (limited to a reasonable amount)
     bot_messages = []
     try:
-        # This could raise discord.errors.DiscordServerError: 500 Internal Server Error
+        # This could raise discord.errors.DiscordServerError: 500 Internal Server Error or 503 Service Unavailable
         async for message in channel.history(limit=5):
             if message.author.id == bot_user_id:
                 bot_messages.append(message)
     except discord.errors.DiscordServerError as e:
-        logger.warning(f"Discord server error while retreiving message in {channel.name} (ID: {channel.id}): {e}")
+        logger.warning(f"Discord server error while retreiving message in {channel.name} (ID: {channel.id}). Giving up: {e}")
+        return
     except discord.errors.HTTPException as e:
-        logger.warning(f"HTTP error while retreiving message in {channel.name} (ID: {channel.id}): {e}")
+        logger.warning(f"HTTP error while retreiving message in {channel.name} (ID: {channel.id}). Giving up: {e}")
+        return
     except Exception as e:
-        logger.exception(f"Unexpected error while retreiving message in {channel.name} (ID: {channel.id}): {e}")
+        logger.exception(f"Unexpected error while retreiving message in {channel.name} (ID: {channel.id}). Giving up: {e}")
+        return
 
     try:
         if not bot_messages:
@@ -75,4 +78,3 @@ async def send_a_message_then_delete(bot, channel_id, message="Test message", de
         logger.error(f"Failed to delete message in {channel.name} (ID: {channel.id}): {e}")
     except Exception as e:
         logger.exception(f"Unexpected error when deleting message in {channel.name} (ID: {channel.id}): {e}")
-        return
