@@ -34,6 +34,11 @@ def save_youtube_channels(data):
 class YouTubeCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+        # Ensure the data folder exists before loading channels
+        if not os.path.exists(DATA_FOLDER):
+            os.makedirs(DATA_FOLDER)
+            logger.info(f"Created missing data folder: {DATA_FOLDER}")
         self.youtube_channels = load_youtube_channels()  # Load channels on startup
 
         # This is useless, because other bots by default ignore the command sent by any bot account
