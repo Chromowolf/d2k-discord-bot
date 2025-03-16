@@ -14,6 +14,21 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 # logger.setLevel(logging.DEBUG)
 
+all_country_codes = {
+    'nr', 'it', 'gu', 'pw', 'mo', 'lc', 'iq', 'cy', 'ly', 'eg', 'cr', 'dk', 'ma', 'kz', 'yt', 'tm', 'tw', 'ki', 'li',
+    'zw', 'gt', 'st', 'ie', 'ru', 'pr', 'al', 'fj', 'cf', 'hk', 'bs', 'cu', 'fm', 'mh', 'se', 'bb', 'ee', 'is', 'vn',
+    'cz', 'na', 'au', 'fk', 'mp', 'km', 'er', 'gd', 'ar', 'ng', 'gy', 'bi', 'cv', 'pf', 'tn', 'us', 'uy', 'so', 'gq',
+    'eh', 'sz', 'sh', 'to', 'tt', 'gn', 'ir', 'tv', 'ne', 'vi', 'bf', 'fr', 'tz', 'nf', 'pe', 'mg', 'az', 'bv', 'io',
+    'mr', 'tk', 'as', 'ch', 'gs', 'ke', 'lv', 'om', 'cx', 'cl', 'gr', 'br', 'pa', 'at', 'bg', 'et', 'mk', 'pl', 'ug',
+    'ky', 'ua', 'ag', 'uz', 'A1', 'do', 'la', 'mc', 'ml', 'co', 'ro', 'hn', 'sb', 'pn', 'sd', 'bm', 'kh', 'am', 'vg',
+    'kw', 'in', 'nl', 'pg', 'sy', 'hr', 'td', 'ba', 'by', 'an', 're', 'ps', 'cg', 'ec', 'my', 'kr', 'ws', 'ga', 'sm',
+    'tc', 'wf', 'cc', 'th', 'ai', 'me', 'jp', 'mt', 'gl', 'cn', 'de', 'tg', 'cm', 'hm', 'np', 'dj', 'dz', 'aw', 'bo',
+    'pm', 'qa', 'mu', 'lk', 'gb', 'be', 'ls', 'nu', 'ht', 'gf', 'bj', 'sv', 'tl', 'sc', 'tr', 'bw', 'il', 'mn', 'sk',
+    'ye', 'ph', 'si', 'ae', 'ad', 'ca', 'pt', 'vc', 'bn', 'bt', 'dm', 'mz', 'sa', 'jo', 'pk', 'lb', 'bz', 'ni', 'mq',
+    'mw', 'cd', 'sg', 'mx', 'tf', 'es', 'rs', 'gw', 'ao', 'py', 'tj', 'kn', 'kg', 'um', 'va', 'lr', 'bd', 'sl', 'sn',
+    'bh', 'ms', 'za', 'af', 'nc', 'ci', 'ge', 'gm', 'rw', 'gp', 'md', 'ck', 'no', 'cs', 'gi', 'sj', 'vu', 'mv', 'jm',
+    'gh', 'lt', 've', 'mm', 'nz', 'kp', 'fi', 'fo', 'hu', 'id', 'sr', 'zm', 'ax', 'lu',
+}
 
 def escape_discord_formatting(text: str) -> str:
     """Escape characters that trigger Discord's Markdown formatting."""
@@ -284,7 +299,11 @@ class IRCCog(commands.Cog):
                 for player_info in sorted_player_list:
                     player_name_escaped = escape_discord_formatting(player_info[4])
                     country_code = player_info[1][2:4]
-                    flag_emoji = ":pirate_flag:" if country_code == "--" else f":flag_{country_code.lower()}:"
+                    if country_code == "--":
+                        flag_emoji = ":pirate_flag:"
+                    else:
+                        country_code_lower = country_code.lower()
+                        flag_emoji = f":flag_{country_code.lower()}:" if country_code_lower in all_country_codes else ":clown:"
                     status_emoji = ":green_circle:" if "H" in player_info[5] else ":red_circle:"
                     escaped_players_with_status.append(
                         f"{status_emoji} {flag_emoji} {player_name_escaped}"
