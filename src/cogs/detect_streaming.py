@@ -14,6 +14,7 @@ class StreamNotifier(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.active_streams = {}  # Tracks active streams {member_id: voice_channel_id}
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
@@ -33,24 +34,25 @@ class StreamNotifier(commands.Cog):
 
         # Get the voice channel
         voice_channel = after.channel if after.channel else before.channel
-        if voice_channel is None:
-            return  # Member is not in a voice channel
-
-        # Generate channel link
-        channel_link = f"https://discord.com/channels/{member.guild.id}/{voice_channel.id}"
+        channel_link = f"https://discord.com/channels/{member.guild.id}/{voice_channel.id}" if voice_channel else "Unknown Voice Channel"
 
         try:
-            # Check if the member has started streaming
+            # Detect streaming start
             if not before.self_stream and after.self_stream:
+                self.active_streams[member.id] = voice_channel.id  # Store active stream
                 message = f'**{member.display_name}** has started a live stream in {channel_link}! <:D2K_Worm:1189389809878323380>'
                 logger.info(f"Stream started by {member.display_name} in {voice_channel.name}")
                 await system_channel.send(message)
 
-            # Check if the member has stopped streaming
-            elif before.self_stream and not after.self_stream:
-                message = f'**{member.display_name}** has stopped streaming in {channel_link}.'
-                logger.info(f"Stream stopped by {member.display_name} in {voice_channel.name}")
-                await system_channel.send(message)
+            # Detect streaming stop (either they stopped streaming or left the channel)
+            elif (before.self_stream and not after.self_stream) or (before.self_stream and after.channel is None):
+                if member.id in self.active_streams:
+                    del self.active_streams[member.id]  # Remove from active streams
+                    message = f'**{member.display_name}** has stopped streaming in {channel_link}.'
+                    logger.info(
+                        f"Stream stopped by {member.display_name} in {voice_channel.name if voice_channel else 'Unknown'}")
+                    await system_channel.send(message)
+
         except discord.errors.DiscordServerError as e:
             logger.warning(
                 f"Discord server error while sending message in {system_channel.name} (ID: {system_channel.id}): {e}")
