@@ -15,9 +15,17 @@ async def send_or_update_embed(bot_user_id, channel, embed, content=""):
     """
     # Get all messages from the bot in this channel (limited to a reasonable amount)
     bot_messages = []
-    async for message in channel.history(limit=10):
-        if message.author.id == bot_user_id:
-            bot_messages.append(message)
+    try:
+        # This could raise discord.errors.DiscordServerError: 500 Internal Server Error
+        async for message in channel.history(limit=5):
+            if message.author.id == bot_user_id:
+                bot_messages.append(message)
+    except discord.errors.DiscordServerError as e:
+        logger.warning(f"Discord server error while retreiving message in {channel.name} (ID: {channel.id}): {e}")
+    except discord.errors.HTTPException as e:
+        logger.warning(f"HTTP error while retreiving message in {channel.name} (ID: {channel.id}): {e}")
+    except Exception as e:
+        logger.exception(f"Unexpected error while retreiving message in {channel.name} (ID: {channel.id}): {e}")
 
     try:
         if not bot_messages:
