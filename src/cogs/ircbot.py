@@ -83,11 +83,34 @@ class Dune2000PlayerMonitor(irc.client.SimpleIRCClient):
         connection.quit("Wrong key.")
 
     def on_nicknameinuse(self, connection, _):
-        """Handles nickname conflicts by generating a new one."""
+        """
+        Registration phase
+        Handles nickname conflicts by generating a new one.
+        """
         new_nick = f"{self.base_nickname}{random.randint(100, 999)}"
         self.nickname = new_nick
         logger.info(f"[IRC] Nickname in use, trying {new_nick}")
         connection.nick(new_nick)
+
+    def on_erroneusnickname(self, connection, _):
+        """
+        Registration phase
+        Handles nickname errors like starting with digits.
+        """
+        logger.error(f"[IRC] Invalid nickname format: {self.nickname}")
+        new_nick = f"A{self.nickname}"
+        self.nickname = new_nick
+        logger.info(f"[IRC] Switching to valid nickname format: {new_nick}")
+        connection.nick(new_nick)
+
+    @staticmethod
+    def on_error(_, event):
+        """
+        General errors
+        """
+        logger.error(f"[IRC] Error received: {event.target if hasattr(event, 'target') else 'unknown'}")
+        if hasattr(event, 'arguments') and event.arguments:
+            logger.error(f"[IRC] Error details: {event.arguments[0]}")
 
     def on_whoreply(self, _, event):
         """Processes WHO replies to extract Dune 2000 players."""
@@ -212,6 +235,7 @@ class IRCCog(commands.Cog):
             server="irc.gamesurge.net",
             port=6667,
             nickname="D2kPlayerMonitor",
+            # nickname="3HAHAHAHAHA",  # Invalid nickname format
             channel="#cncnet",
             channel_key=CNCNET_CHANNEL_KEY
         )
