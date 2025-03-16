@@ -22,6 +22,10 @@ class StreamNotifier(commands.Cog):
         This checks if a member starts or stops streaming.
         """
 
+        # Ensure we only process events from the intended guild
+        if member.guild.id != D2K_SERVER_ID:
+            return
+
         # Get the system channel
         system_channel = member.guild.system_channel
         if system_channel is None:
