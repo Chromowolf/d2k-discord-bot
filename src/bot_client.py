@@ -3,16 +3,22 @@ from discord.ext import commands
 from discord import app_commands
 import logging
 from config import D2K_SERVER_ID
+import os
 
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
-
+DATA_FOLDER = "data"
 
 class MyClient(commands.Bot):
     def __init__(self):
         intents = discord.Intents.default()
         # intents = discord.Intents.all()
         intents.message_content = True
+
+        # Ensure the data folder exists before loading cogs
+        if not os.path.exists(DATA_FOLDER):
+            os.makedirs(DATA_FOLDER)
+            logger.info(f"Created missing data folder: {DATA_FOLDER}")
 
         # Added help_command=None to disable the default "!help" command
         super().__init__(command_prefix="!", intents=intents, help_command=None)  # "!" is just a placeholder
@@ -23,6 +29,7 @@ class MyClient(commands.Bot):
             "youtube",
             "detect_streaming",
             "autoreaction",
+            "ai_chat",
         ]
 
     async def setup_hook(self):
