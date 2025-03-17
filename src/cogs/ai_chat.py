@@ -79,7 +79,7 @@ class AIChat(commands.Cog):
             timestamp = interaction.created_at.strftime("%Y-%m-%d %H:%M:%S UTC")
 
             # Calculate max output tokens
-            max_output_tokens = (2000 - len(message)) // 4  # Ensure a minimum response length
+            # max_output_tokens = (2000 - len(message)) // 4  # Ensure a minimum response length
 
             prompt = (
                 f"User (ID: {user_id}, Nickname: {user_nickname}, Timestamp: {timestamp}) says:\n"
@@ -98,7 +98,7 @@ class AIChat(commands.Cog):
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     system_instruction=system_prompt,
-                    max_output_tokens=max_output_tokens,  # Set token limit to prevent exceeding 2000 characters
+                    max_output_tokens=100000,
                     # seed=42,
                     safety_settings=[
                         types.SafetySetting(
