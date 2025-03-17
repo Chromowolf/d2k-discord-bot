@@ -125,7 +125,7 @@ class AIChat(commands.Cog):
                 ),
             )
 
-            ai_reply = response.text[:1950] if response.text else "I couldn't generate a response. Try again!"
+            ai_reply = response.text[:1900] if response.text else "I couldn't generate a response. Try again!"
             response_json = response.to_json_dict()
             total_token_count = response_json.get("usage_metadata", {}).get("total_token_count", 0)
             logger.info(f"Total token count of this request: {total_token_count}")
