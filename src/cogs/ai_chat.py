@@ -8,7 +8,7 @@ from google import genai
 from google.genai import types
 # import asyncio
 from config import D2K_SERVER_ID, GEMINI_API_TOKEN
-# import json
+import json
 from utils.load_files import load_text_prompt, load_chat_history
 
 # Rate limits: https://ai.google.dev/gemini-api/docs/rate-limits#free-tier
@@ -129,7 +129,7 @@ class AIChat(commands.Cog):
             response_json = response.to_json_dict()
             total_token_count = response_json.get("usage_metadata", {}).get("total_token_count", 0)
             logger.info(f"Total token count of this request: {total_token_count}")
-            logger.debug(f"response info: \n{response.model_dump()}")
+            logger.debug(f"response info: \n{json.dumps(response.model_dump(), indent=2)}")
 
             # Format the final output
             final_response = f"**{user_nickname} (at {timestamp}):** {message}\n\n**Response:** {ai_reply}"
