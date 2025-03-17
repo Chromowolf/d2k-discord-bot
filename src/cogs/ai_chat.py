@@ -16,7 +16,7 @@ from utils.load_files import load_text_prompt, load_chat_history
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
 
-# logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("google_genai.models").setLevel(logging.WARNING)
 
@@ -85,7 +85,7 @@ class AIChat(commands.Cog):
                 f"```{message}```\n\n"
             )
 
-            logger.debug(f"Sending prompt: {prompt}")
+            logger.debug(f"Sending prompt: \n{prompt}")
 
             # noinspection PyUnresolvedReferences
             await interaction.response.defer()  # Defer response to allow processing time
