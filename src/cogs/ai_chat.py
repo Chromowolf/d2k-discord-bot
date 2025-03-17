@@ -8,25 +8,17 @@ from google import genai
 from google.genai import types
 # import asyncio
 from config import D2K_SERVER_ID, GEMINI_API_TOKEN
-import os
+import json
+from utils.load_files import load_text_prompt, load_chat_history
 
 # Rate limits: https://ai.google.dev/gemini-api/docs/rate-limits#free-tier
 
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
-SYSTEM_PROMPT_PATH = "data/system_prompt_gemini.txt"  # Path to the system prompt file
 
+# logger.setLevel(logging.DEBUG)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("google_genai.models").setLevel(logging.WARNING)
-
-def load_system_prompt():
-    """Loads the system prompt from a text file."""
-    if os.path.exists(SYSTEM_PROMPT_PATH):
-        with open(SYSTEM_PROMPT_PATH, "r", encoding="utf-8") as file:
-            return file.read().strip()  # Strip to remove extra spaces/newlines
-    else:
-        logger.warning(f"System prompt file not found at {SYSTEM_PROMPT_PATH}. Using default prompt.")
-        return "You are a Discord AI bot. Be helpful and engaging."
 
 
 class AIChat(commands.Cog):
@@ -38,39 +30,88 @@ class AIChat(commands.Cog):
         self.bot = bot
 
         # Load system prompt from file
-        self.system_prompt = load_system_prompt()
+        self.system_prompt_short = load_text_prompt()
+        chat_history = load_chat_history()
+        self.system_prompt_long = f"{self.system_prompt_short} \n Some chat history for you to get familiar to our culture:\n {chat_history}"
+
+        self.models = [
+            "gemini-2.0-flash-thinking-exp-01-21",
+            "gemini-2.0-flash",
+        ]
+        self.model = self.models[0]
 
         self.aiclient = genai.Client(api_key=GEMINI_API_TOKEN)
 
     @app_commands.command(name="chat", description="Start a single-round conversation with the bot.")
     @app_commands.describe(message="Type anything you want to say.")
     @app_commands.checks.cooldown(3, 60, key=lambda i: (i.guild_id, i.user.id))  # 3 times per minute per user
-    @app_commands.checks.cooldown(15, 60, key=lambda i: i.guild_id)  # 15 times per minute for all users
+    @app_commands.checks.cooldown(10, 60, key=lambda i: i.guild_id)  # 15 times per minute for all users
     async def chat(self, interaction: discord.Interaction, message: str):
+        await self.chat_with_prompt(interaction, message, use_chat_history=False)
+
+    @app_commands.command(name="chat2", description="Start a single-round conversation with the bot. Slow than \\chat, but might be smarter.")
+    @app_commands.describe(message="Type anything you want to say.")
+    @app_commands.checks.cooldown(3, 60, key=lambda i: (i.guild_id, i.user.id))  # 3 times per minute per user
+    @app_commands.checks.cooldown(10, 60, key=lambda i: i.guild_id)  # 15 times per minute for all users
+    async def chat2(self, interaction: discord.Interaction, message: str):
+        await self.chat_with_prompt(interaction, message, use_chat_history=True)
+
+    async def chat_with_prompt(self, interaction: discord.Interaction, message: str, use_chat_history=False):
         """Handles the `/chat` command."""
-        if interaction.guild is None or interaction.guild.id != D2K_SERVER_ID:
-            # noinspection PyUnresolvedReferences
-            await interaction.response.send_message("This command can only be used in the D2K server.", ephemeral=True)
-            return
-
-        # noinspection PyUnresolvedReferences
-        await interaction.response.defer()  # Defer response to allow processing time
-
         try:
+            if interaction.guild is None or interaction.guild.id != D2K_SERVER_ID:
+                # noinspection PyUnresolvedReferences
+                await interaction.response.send_message("This command can only be used in the D2K server.", ephemeral=True)
+                return
+
+            # Reject messages exceeding 1000 characters
+            if len(message) > 1000:
+                # noinspection PyUnresolvedReferences
+                await interaction.response.send_message("Your message cannot exceed 1000 characters.", ephemeral=True)
+                return
+
+            # Get user details
+            user_nickname = interaction.user.nick or interaction.user.global_name or interaction.user.name
+            user_id = interaction.user.id
+
+            # Get timestamp of the message and format it (UTC time)
+            timestamp = interaction.created_at.strftime("%Y-%m-%d %H:%M:%S UTC")
+
+            # Calculate max output tokens
+            max_output_tokens = (2000 - len(message)) // 4  # Ensure a minimum response length
+
+            prompt = (
+                f"User (ID: {user_id}, Nickname: {user_nickname}, Timestamp: {timestamp}) says:\n"
+                f"```{message}```\n\n"
+            )
+
+            logger.debug(f"Sending prompt: {prompt}")
+
+            # noinspection PyUnresolvedReferences
+            await interaction.response.defer()  # Defer response to allow processing time
+
+            system_prompt = self.system_prompt_long if use_chat_history else self.system_prompt_short
             # Generate AI response
             response = await self.aiclient.aio.models.generate_content(
-                model='gemini-2.0-flash',
-                contents=message,
+                model=self.model,
+                contents=prompt,
                 config=types.GenerateContentConfig(
-                    system_instruction=self.system_prompt,
-                    max_output_tokens=500  # Set token limit to prevent exceeding 2000 characters
+                    system_instruction=system_prompt,
+                    max_output_tokens=max_output_tokens  # Set token limit to prevent exceeding 2000 characters
                     # seed=42,
                 ),
             )
 
             ai_reply = response.text[:1950] if response.text else "I couldn't generate a response. Try again!"
+            response_json = json.loads(response.model_dump_json())
+            total_token_count = response_json.get("usage_metadata", {}).get("total_token_count", 0)
+            logger.info(f"Total token count of this request: {total_token_count}")
+            logger.debug(f"response info: \n{json.dumps(response_json, indent=4)}")
 
-            await interaction.followup.send(ai_reply)
+            # Format the final output
+            final_response = f"**{user_nickname} (at {timestamp}):** {message}\n\n**Response:** {ai_reply}"
+
+            await interaction.followup.send(final_response)
 
         except Exception as e:
             logger.exception(f"Error in AI chat command: {e}")
