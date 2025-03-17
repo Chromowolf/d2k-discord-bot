@@ -8,10 +8,11 @@ from google import genai
 from google.genai import types
 # import asyncio
 from config import D2K_SERVER_ID, GEMINI_API_TOKEN
-import json
+# import json
 from utils.load_files import load_text_prompt, load_chat_history
 
 # Rate limits: https://ai.google.dev/gemini-api/docs/rate-limits#free-tier
+# Doc: https://github.com/google-gemini/generative-ai-python
 
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
@@ -97,16 +98,38 @@ class AIChat(commands.Cog):
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     system_instruction=system_prompt,
-                    max_output_tokens=max_output_tokens  # Set token limit to prevent exceeding 2000 characters
+                    max_output_tokens=max_output_tokens,  # Set token limit to prevent exceeding 2000 characters
                     # seed=42,
+                    safety_settings=[
+                        types.SafetySetting(
+                            category=types.HarmCategory.HARM_CATEGORY_HARASSMENT,
+                            threshold=types.HarmBlockThreshold.BLOCK_NONE
+                        ),
+                        types.SafetySetting(
+                            category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                            threshold=types.HarmBlockThreshold.BLOCK_NONE
+                        ),
+                        types.SafetySetting(
+                            category=types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                            threshold=types.HarmBlockThreshold.BLOCK_NONE
+                        ),
+                        types.SafetySetting(
+                            category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                            threshold=types.HarmBlockThreshold.BLOCK_NONE
+                        ),
+                        types.SafetySetting(
+                            category=types.HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY,
+                            threshold=types.HarmBlockThreshold.BLOCK_NONE
+                        )
+                    ]
                 ),
             )
 
             ai_reply = response.text[:1950] if response.text else "I couldn't generate a response. Try again!"
-            response_json = json.loads(response.model_dump_json())
+            response_json = response.to_json_dict()
             total_token_count = response_json.get("usage_metadata", {}).get("total_token_count", 0)
             logger.info(f"Total token count of this request: {total_token_count}")
-            logger.debug(f"response info: \n{json.dumps(response_json, indent=4)}")
+            logger.debug(f"response info: \n{response.model_dump()}")
 
             # Format the final output
             final_response = f"**{user_nickname} (at {timestamp}):** {message}\n\n**Response:** {ai_reply}"
