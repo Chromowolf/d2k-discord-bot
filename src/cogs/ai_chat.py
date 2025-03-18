@@ -102,7 +102,7 @@ class AIChat(commands.Cog):
                 f"```{message}```\n\n"
             )
 
-            logger.debug(f"Sending prompt: \n{prompt}")
+            logger.info(f"Sending prompt: \n{prompt}")
 
             # noinspection PyUnresolvedReferences
             await interaction.response.defer()  # Defer response to allow processing time
