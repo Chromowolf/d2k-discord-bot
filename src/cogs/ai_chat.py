@@ -80,7 +80,7 @@ class AIChat(commands.Cog):
         except Exception as e:
             logger.exception(f"Error when ingesting latest prompt: {e}")
 
-    @app_commands.command(name="chat", description="Start a single-round conversation with the bot (no memory, no context from recent chats).")
+    @app_commands.command(name="chat", description="Start a single-round conversation with the bot (no memory).")
     @app_commands.describe(message="Type anything you want to say.")
     @app_commands.checks.cooldown(20, 3600, key=lambda i: (i.guild_id, i.user.id))  # 3 times per minute per user
     # @app_commands.checks.cooldown(50, 86400, key=lambda i: (i.guild_id, i.user.id))  # 50 times per day per user
@@ -89,7 +89,7 @@ class AIChat(commands.Cog):
     async def chat(self, interaction: discord.Interaction, message: str):
         await self.chat_with_prompt(interaction, message, use_chat_history=False)
 
-    @app_commands.command(name="chat2", description="Start a single-round conversation with the bot (no memory, no context from recent chats). Slower than /chat, but might be smarter.")
+    @app_commands.command(name="chat2", description="Start a single-round conversation with the bot (no memory). Slower than /chat, but might be smarter")
     @app_commands.describe(message="Type anything you want to say.")
     @app_commands.checks.cooldown(20, 3600, key=lambda i: (i.guild_id, i.user.id))  # 3 times per minute per user
     # @app_commands.checks.cooldown(50, 86400, key=lambda i: (i.guild_id, i.user.id))  # 50 times per day per user
