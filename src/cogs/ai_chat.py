@@ -99,7 +99,7 @@ class AIChat(commands.Cog):
 
             prompt = (
                 f"User (ID: {user_id}, Nickname: {user_nickname}, Timestamp: {timestamp}) says:\n"
-                f"{message}\n\n"
+                f"{message}"
             )
 
             logger.info(f"Sending prompt: \n{prompt}")
