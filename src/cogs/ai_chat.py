@@ -15,6 +15,7 @@ from utils.discord_msg import get_referenced_message, get_recent_messages
 from PIL import Image
 import aiohttp
 from io import BytesIO
+from utils.command_checks import is_creator
 
 # Rate limits: https://ai.google.dev/gemini-api/docs/rate-limits#free-tier
 # Doc: https://github.com/google-gemini/generative-ai-python
@@ -66,6 +67,18 @@ class AIChat(commands.Cog):
         self.cooldown_manager.add_per_user_limit(50, 86400)
         self.cooldown_manager.add_global_limit(10, 60)
         self.cooldown_manager.add_global_limit(500, 86400)
+
+    def update_baisc_system_prompt(self):
+        self.system_prompt_short = load_text_prompt()
+
+    @app_commands.command(name="ingestprompt", description="[Admin only]")
+    @app_commands.check(is_creator)
+    async def ingest_latest_prompt(self, interaction):
+        self.update_baisc_system_prompt()
+        try:
+            await interaction.response.send_message(f"Prompt updated!", ephemeral=True)
+        except Exception as e:
+            logger.exception(f"Error when ingesting latest prompt: {e}")
 
     @app_commands.command(name="chat", description="Start a single-round conversation with the bot (no memory, no context from recent chats).")
     @app_commands.describe(message="Type anything you want to say.")
