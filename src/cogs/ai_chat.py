@@ -11,6 +11,7 @@ from config import D2K_SERVER_ID, GEMINI_API_TOKEN
 import json
 from utils.load_files import load_text_prompt, load_chat_history
 from utils.rate_limiter import MixedRateLimiter
+from utils.discord_msg import get_referenced_message, get_recent_messages
 
 from PIL import Image
 import aiohttp
@@ -242,11 +243,27 @@ class AIChat(commands.Cog):
             user_nickname = message.author.nick or message.author.global_name or message.author.name
             user_id = message.author.id
 
+            ###################
+            # Get contexts
+            ###################
+            recents = await get_recent_messages(message.channel)
+            to_be_sent = ["Recent messages in the channel:"]
+            to_be_sent += recents
+
+            rpl = await get_referenced_message(message)
+            if rpl:
+                rpl_chain = "Reply chain: \n" + "\n".join(rpl)
+            else:
+                rpl_chain = ""
+
+            to_be_sent.append(rpl_chain)
+
             # Get timestamp of the message and format it (UTC time)
             timestamp = message.created_at.strftime("%Y-%m-%d %H:%M:%S UTC")
 
-            # Create the prompt
-            prompt = (
+            # Create the latest prompt
+            to_be_sent.append(
+                f"Latest message for you to reply:\n"
                 f"User (ID: {user_id}, Nickname: {user_nickname}, Timestamp: {timestamp}) says:\n"
                 f"{content}"
             )
@@ -260,12 +277,15 @@ class AIChat(commands.Cog):
                         if image:
                             images.append(image)
 
-            logger.info(f"Sending prompt with {len(images)} images: \n{prompt}")
+            logger.info(f"Sending prompt with {len(images)} images: \n")
+            for m in to_be_sent:
+                logger.info(m)
+
             # Show typing indicator
             async with message.channel.typing():
                 # Use long prompt for more context
                 ai_reply = await self.generate_ai_reply(
-                    [prompt] + images,
+                    to_be_sent + images,
                     use_chat_history=False
                 )
                 await message.reply(ai_reply[:1990])

@@ -78,3 +78,75 @@ async def send_a_message_then_delete(bot, channel_id, message="Test message", de
         logger.error(f"Failed to delete message in {channel.name} (ID: {channel.id}): {e}")
     except Exception as e:
         logger.exception(f"Unexpected error when deleting message in {channel.name} (ID: {channel.id}): {e}")
+
+
+async def format_message(message):
+    """Format a single message for the prompt."""
+    user = message.author
+    user_id = user.id
+    nickname = user.nick or user.global_name or user.name
+    timestamp = message.created_at.strftime("%Y-%m-%d %H:%M:%S UTC")
+
+    replied_message = None
+    if message.reference and message.reference.resolved:
+        replied_message = message.reference.resolved
+
+    replying_to_str = ""
+    if replied_message:
+        replying_to_str = f" [replying to message: {replied_message.id}]"
+    return (
+        f"[Message ID: {message.id}] User (ID: {user_id}, Name: {nickname}, Timestamp: {timestamp})"
+        f"{replying_to_str}"
+        f": {message.content}"
+    )
+
+
+async def get_recent_messages(channel, limit=20) -> list[str]:
+    """Get the latest messages from the channel as context."""
+    messages = []
+    try:
+        async for msg in channel.history(limit=limit):
+            messages.append(await format_message(msg))
+    except (discord.NotFound, discord.Forbidden, discord.HTTPException) as e:
+        logger.warning(f"Error getting channel context: {e}")
+    except Exception as e:
+        logger.exception(f"Unexpected error when getting channel context: {e}")
+
+    # Reverse to get chronological order
+    messages.reverse()
+    return messages
+
+
+async def get_referenced_message(message, depth=0, max_depth=10) -> list[str]:
+    """
+    Recursively get the referenced messages in a reply chain.
+
+    Args:
+        message: The Discord message object
+        depth: Current depth in the reply chain
+        max_depth: Maximum depth to traverse
+
+    Returns:
+        String representation of the reply chain in chronological order
+    """
+    if depth >= max_depth or not message.reference or not message.reference.message_id:
+        return []
+
+    try:
+        referenced_msg = await message.channel.fetch_message(message.reference.message_id)
+
+        # Recursively get earlier messages in the chain first
+        earlier_messages = await get_referenced_message(referenced_msg, depth + 1, max_depth)
+
+        # Add the current referenced message
+        formatted_msg = await format_message(referenced_msg)
+
+        # Return in chronological order (earliest first)
+        return earlier_messages + [formatted_msg]
+
+    except (discord.NotFound, discord.Forbidden, discord.HTTPException) as e:
+        logger.warning(f"Error fetching referenced message: {e}")
+        return []
+    except Exception as e:
+        logger.exception(f"Unexpected error when fetching referenced message: {e}")
+        return []
