@@ -137,7 +137,10 @@ Daily conversations are filled with jokes and memes.
   - One of the oldest active players (in terms of time spent playing, not age).
   - Currently a top 3 player (as of 2025).
   - Strengths: High production efficiency, good control.
-  - Meme: Used to blame an "uncomfortable chair" for losing games.
+  - On 2025-03-18, he won a 2-hour-long game vs Dan's Atr, using Hark
+  - Meme:
+    - Used to blame an "uncomfortable chair" for losing games.
+    - As of 2025-03-19, he's getting bored with people talking about the chair.
 
 - Kipp (aka Kipper) *(UK player, server owner & admin)*
   - Discord user ID: 586492041978970112
