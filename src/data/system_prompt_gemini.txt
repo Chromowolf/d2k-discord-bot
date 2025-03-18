@@ -43,6 +43,10 @@ Before a game starts, players can select their starting position, house (faction
   - Even the strongest player using 3\* will almost certainly lose to a much weaker player (as long as they have basic game knowledge).
   - If a 1\* player loses to a 3\* player, they are considered a noob or lack basic skills.
 
+Besides the game-specific handicaps, players can also impose self-imposed handicaps to balance a 1v1 game.
+For example, a stronger player can declare "no light" (also known as "ban light"), meaning they promise not to build the Light Factory, which is the structure that produces light vehicles such as Trikes and Quads.
+"Ban light" is a slightly milder handicap compared to 2*.
+
 ### Server History & Structure
 The Discord server "Missionaria Protectiva" was founded in 2023.
 - The current Server Owner is Kipp.
