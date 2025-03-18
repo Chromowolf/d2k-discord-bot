@@ -277,9 +277,10 @@ class AIChat(commands.Cog):
                         if image:
                             images.append(image)
 
-            logger.info(f"Sending prompt with {len(images)} images: \n")
+            info_to_log = f"Sending prompt with {len(images)} images: \n"
             for m in to_be_sent:
-                logger.info(m)
+                info_to_log += f"{m}\n"
+            logger.info(info_to_log)
 
             # Show typing indicator
             async with message.channel.typing():
