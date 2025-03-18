@@ -50,7 +50,7 @@ class AIChat(commands.Cog):
     async def chat(self, interaction: discord.Interaction, message: str):
         await self.chat_with_prompt(interaction, message, use_chat_history=False)
 
-    @app_commands.command(name="chat2", description="Start a single-round conversation with the bot. Slower than \\chat, but might be smarter.")
+    @app_commands.command(name="chat2", description="Start a single-round conversation with the bot. Slower than /chat, but might be smarter.")
     @app_commands.describe(message="Type anything you want to say.")
     @app_commands.checks.cooldown(3, 60, key=lambda i: (i.guild_id, i.user.id))  # 3 times per minute per user
     @app_commands.checks.cooldown(10, 60, key=lambda i: i.guild_id)  # 15 times per minute for all users
