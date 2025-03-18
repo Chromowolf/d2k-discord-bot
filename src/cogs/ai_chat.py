@@ -265,8 +265,8 @@ class AIChat(commands.Cog):
             to_be_sent.append(
                 f"Latest message for you to reply:\n"
                 f"User (ID: {user_id}, Nickname: {user_nickname}, Timestamp: {timestamp}) says:\n"
-                f"{content}"
-                f"**Note**: The timestamps are just for your reference to give you more context. DO NOT add these prefixes when you reply!"
+                f"{content}\n"
+                f"**The timestamps are just for your reference to provide more context. DO NOT add these prefixes or any other prefix when you reply! Your output should only be your reply, without any extra text.**"
             )
 
             # Handle image attachments
