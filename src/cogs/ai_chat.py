@@ -18,7 +18,7 @@ from utils.rate_limiter import MixedRateLimiter
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
 
-logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("google_genai.models").setLevel(logging.WARNING)
 
