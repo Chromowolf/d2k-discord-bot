@@ -10,6 +10,7 @@ from google.genai import types
 from config import D2K_SERVER_ID, GEMINI_API_TOKEN
 import json
 from utils.load_files import load_text_prompt, load_chat_history
+from utils.rate_limiter import MixedRateLimiter
 
 # Rate limits: https://ai.google.dev/gemini-api/docs/rate-limits#free-tier
 # Doc: https://github.com/google-gemini/generative-ai-python
@@ -42,18 +43,27 @@ class AIChat(commands.Cog):
         self.model = self.models[0]
 
         self.aiclient = genai.Client(api_key=GEMINI_API_TOKEN)
+        self.cooldown_manager = MixedRateLimiter()
+        self.cooldown_manager.add_per_user_limit(3, 60)
+        self.cooldown_manager.add_per_user_limit(50, 86400)
+        self.cooldown_manager.add_global_limit(10, 60)
+        self.cooldown_manager.add_global_limit(500, 86400)
 
     @app_commands.command(name="chat", description="Start a single-round conversation with the bot.")
     @app_commands.describe(message="Type anything you want to say.")
-    @app_commands.checks.cooldown(3, 60, key=lambda i: (i.guild_id, i.user.id))  # 3 times per minute per user
-    @app_commands.checks.cooldown(10, 60, key=lambda i: i.guild_id)  # 15 times per minute for all users
+    @app_commands.checks.cooldown(20, 3600, key=lambda i: (i.guild_id, i.user.id))  # 3 times per minute per user
+    # @app_commands.checks.cooldown(50, 86400, key=lambda i: (i.guild_id, i.user.id))  # 50 times per day per user
+    # @app_commands.checks.cooldown(10, 60, key=lambda i: i.guild_id)  # 15 times per minute for all users
+    # @app_commands.checks.cooldown(500, 86400, key=lambda i: i.guild_id)  # 500 times per day for all users
     async def chat(self, interaction: discord.Interaction, message: str):
         await self.chat_with_prompt(interaction, message, use_chat_history=False)
 
     @app_commands.command(name="chat2", description="Start a single-round conversation with the bot. Slower than /chat, but might be smarter.")
     @app_commands.describe(message="Type anything you want to say.")
-    @app_commands.checks.cooldown(3, 60, key=lambda i: (i.guild_id, i.user.id))  # 3 times per minute per user
-    @app_commands.checks.cooldown(10, 60, key=lambda i: i.guild_id)  # 15 times per minute for all users
+    @app_commands.checks.cooldown(20, 3600, key=lambda i: (i.guild_id, i.user.id))  # 3 times per minute per user
+    # @app_commands.checks.cooldown(50, 86400, key=lambda i: (i.guild_id, i.user.id))  # 50 times per day per user
+    # @app_commands.checks.cooldown(10, 60, key=lambda i: i.guild_id)  # 15 times per minute for all users
+    # @app_commands.checks.cooldown(500, 86400, key=lambda i: i.guild_id)  # 500 times per day for all users
     async def chat2(self, interaction: discord.Interaction, message: str):
         await self.chat_with_prompt(interaction, message, use_chat_history=True)
 
@@ -69,6 +79,12 @@ class AIChat(commands.Cog):
             if len(message) > 1000:
                 # noinspection PyUnresolvedReferences
                 await interaction.response.send_message("Your message cannot exceed 1000 characters.", ephemeral=True)
+                return
+
+            # Check against rate limiter
+            if not self.cooldown_manager.try_add_message(interaction.user):
+                # noinspection PyUnresolvedReferences
+                await interaction.response.send_message("You have exceeded the rate limit. Please try again later.", ephemeral=True)
                 return
 
             # Get user details
