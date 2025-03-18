@@ -234,7 +234,7 @@ class AIChat(commands.Cog):
 
             # Check against rate limiter
             if not self.cooldown_manager.try_add_message(message.author):
-                await message.reply("You have exceeded the rate limit. Please try again later.")
+                await message.reply("You have exceeded the rate limit. Please try again later.", ephemeral=True)
                 return
 
             # Extract message content
