@@ -1,3 +1,5 @@
 discord.py
 irc
 google-genai
+pillow
+aiohttp

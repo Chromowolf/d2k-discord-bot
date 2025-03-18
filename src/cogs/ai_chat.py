@@ -12,6 +12,10 @@ import json
 from utils.load_files import load_text_prompt, load_chat_history
 from utils.rate_limiter import MixedRateLimiter
 
+from PIL import Image
+import aiohttp
+from io import BytesIO
+
 # Rate limits: https://ai.google.dev/gemini-api/docs/rate-limits#free-tier
 # Doc: https://github.com/google-gemini/generative-ai-python
 
@@ -22,6 +26,19 @@ guild = discord.Object(D2K_SERVER_ID)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("google_genai.models").setLevel(logging.WARNING)
 
+async def download_image(url: str) -> Image.Image | None:
+    """Asynchronously downloads an image from a URL and returns a PIL Image."""
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                if resp.status != 200:
+                    print(f"Failed to download image: {resp.status}")
+                    return None
+                image_data = await resp.read()
+                return Image.open(BytesIO(image_data))
+    except Exception as e:
+        print(f"Error downloading image: {e}")
+        return None
 
 class AIChat(commands.Cog):
     """
@@ -94,9 +111,6 @@ class AIChat(commands.Cog):
             # Get timestamp of the message and format it (UTC time)
             timestamp = interaction.created_at.strftime("%Y-%m-%d %H:%M:%S UTC")
 
-            # Calculate max output tokens
-            # max_output_tokens = (2000 - len(message)) // 4  # Ensure a minimum response length
-
             prompt = (
                 f"User (ID: {user_id}, Nickname: {user_nickname}, Timestamp: {timestamp}) says:\n"
                 f"{message}"
@@ -107,45 +121,47 @@ class AIChat(commands.Cog):
             # noinspection PyUnresolvedReferences
             await interaction.response.defer()  # Defer response to allow processing time
 
-            system_prompt = self.system_prompt_long if use_chat_history else self.system_prompt_short
-            # Generate AI response
-            response = await self.aiclient.aio.models.generate_content(
-                model=self.model,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    system_instruction=system_prompt,
-                    max_output_tokens=100000,
-                    # seed=42,
-                    safety_settings=[
-                        types.SafetySetting(
-                            category=types.HarmCategory.HARM_CATEGORY_HARASSMENT,
-                            threshold=types.HarmBlockThreshold.BLOCK_NONE
-                        ),
-                        types.SafetySetting(
-                            category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-                            threshold=types.HarmBlockThreshold.BLOCK_NONE
-                        ),
-                        types.SafetySetting(
-                            category=types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-                            threshold=types.HarmBlockThreshold.BLOCK_NONE
-                        ),
-                        types.SafetySetting(
-                            category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-                            threshold=types.HarmBlockThreshold.BLOCK_NONE
-                        ),
-                        types.SafetySetting(
-                            category=types.HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY,
-                            threshold=types.HarmBlockThreshold.BLOCK_NONE
-                        )
-                    ]
-                ),
-            )
+            # system_prompt = self.system_prompt_long if use_chat_history else self.system_prompt_short
+            # # Generate AI response
+            # response = await self.aiclient.aio.models.generate_content(
+            #     model=self.model,
+            #     contents=prompt,
+            #     config=types.GenerateContentConfig(
+            #         system_instruction=system_prompt,
+            #         max_output_tokens=100000,
+            #         # seed=42,
+            #         safety_settings=[
+            #             types.SafetySetting(
+            #                 category=types.HarmCategory.HARM_CATEGORY_HARASSMENT,
+            #                 threshold=types.HarmBlockThreshold.BLOCK_NONE
+            #             ),
+            #             types.SafetySetting(
+            #                 category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+            #                 threshold=types.HarmBlockThreshold.BLOCK_NONE
+            #             ),
+            #             types.SafetySetting(
+            #                 category=types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+            #                 threshold=types.HarmBlockThreshold.BLOCK_NONE
+            #             ),
+            #             types.SafetySetting(
+            #                 category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+            #                 threshold=types.HarmBlockThreshold.BLOCK_NONE
+            #             ),
+            #             types.SafetySetting(
+            #                 category=types.HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY,
+            #                 threshold=types.HarmBlockThreshold.BLOCK_NONE
+            #             )
+            #         ]
+            #     ),
+            # )
+            #
+            # ai_reply = response.text if response.text else "I couldn't generate a response. Try again!"
+            # response_json = response.to_json_dict()
+            # total_token_count = response_json.get("usage_metadata", {}).get("total_token_count", 0)
+            # logger.debug(f"Total token count of this request: {total_token_count}")
+            # logger.debug(f"response info: \n{json.dumps(response.model_dump(), indent=2)}")
 
-            ai_reply = response.text if response.text else "I couldn't generate a response. Try again!"
-            response_json = response.to_json_dict()
-            total_token_count = response_json.get("usage_metadata", {}).get("total_token_count", 0)
-            logger.debug(f"Total token count of this request: {total_token_count}")
-            logger.debug(f"response info: \n{json.dumps(response.model_dump(), indent=2)}")
+            ai_reply = await self.generate_ai_reply(prompt, use_chat_history=use_chat_history)
 
             # Format the final output
             final_response = f"**{user_nickname} (at {timestamp}):** {message}\n\n**Response:** {ai_reply}"
@@ -156,6 +172,106 @@ class AIChat(commands.Cog):
             logger.exception(f"Error in AI chat command: {e}")
             await interaction.followup.send("An error occurred while generating a response. Try again later.", ephemeral=True)
 
+    async def generate_ai_reply(self, message_content, use_chat_history=False):
+        system_prompt = self.system_prompt_long if use_chat_history else self.system_prompt_short
+        # Generate AI response
+        response = await self.aiclient.aio.models.generate_content(
+            model=self.model,
+            contents=message_content,
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt,
+                max_output_tokens=100000,
+                # seed=42,
+                safety_settings=[
+                    types.SafetySetting(
+                        category=types.HarmCategory.HARM_CATEGORY_HARASSMENT,
+                        threshold=types.HarmBlockThreshold.BLOCK_NONE
+                    ),
+                    types.SafetySetting(
+                        category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                        threshold=types.HarmBlockThreshold.BLOCK_NONE
+                    ),
+                    types.SafetySetting(
+                        category=types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                        threshold=types.HarmBlockThreshold.BLOCK_NONE
+                    ),
+                    types.SafetySetting(
+                        category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                        threshold=types.HarmBlockThreshold.BLOCK_NONE
+                    ),
+                    types.SafetySetting(
+                        category=types.HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY,
+                        threshold=types.HarmBlockThreshold.BLOCK_NONE
+                    )
+                ]
+            ),
+        )
+
+        ai_reply = response.text if response.text else "I couldn't generate a response. Try again!"
+        response_json = response.to_json_dict()
+        total_token_count = response_json.get("usage_metadata", {}).get("total_token_count", 0)
+        logger.debug(f"Total token count of this request: {total_token_count}")
+        logger.debug(f"response info: \n{json.dumps(response.model_dump(), indent=2)}")
+
+        return ai_reply
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        try:
+            # Ignore messages from the bot itself
+            if message.author == self.bot.user:
+                return
+
+            # Check if the message is in the correct guild
+            if message.guild is None or message.guild.id != D2K_SERVER_ID:
+                return
+
+            # Check if the bot was mentioned
+            if self.bot.user not in message.mentions:
+                return
+
+            # Check against rate limiter
+            if not self.cooldown_manager.try_add_message(message.author):
+                await message.reply("You have exceeded the rate limit. Please try again later.")
+                return
+
+            # Extract message content
+            content = message.content
+
+            # Get user details
+            user_nickname = message.author.nick or message.author.global_name or message.author.name
+            user_id = message.author.id
+
+            # Get timestamp of the message and format it (UTC time)
+            timestamp = message.created_at.strftime("%Y-%m-%d %H:%M:%S UTC")
+
+            # Create the prompt
+            prompt = (
+                f"User (ID: {user_id}, Nickname: {user_nickname}, Timestamp: {timestamp}) says:\n"
+                f"{content}"
+            )
+
+            # Handle image attachments
+            images = []
+            if message.attachments:
+                for attachment in message.attachments:
+                    if attachment.content_type and attachment.content_type.startswith('image/'):
+                        image = await download_image(attachment.url)
+                        if image:
+                            images.append(image)
+
+            logger.info(f"Sending prompt with {len(images)} images: \n{prompt}")
+            # Show typing indicator
+            async with message.channel.typing():
+                # Use long prompt for more context
+                ai_reply = await self.generate_ai_reply(
+                    [prompt] + images,
+                    use_chat_history=False
+                )
+                await message.reply(ai_reply[:1990])
+
+        except Exception as e:
+            logger.exception(f"Error in AI chat command: {e}")
 
 async def setup(bot):
     """Registers the cog with the bot."""
