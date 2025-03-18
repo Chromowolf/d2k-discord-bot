@@ -11,8 +11,8 @@ DATA_FOLDER = "data"
 
 class MyClient(commands.Bot):
     def __init__(self):
-        intents = discord.Intents.default()
-        # intents = discord.Intents.all()
+        # intents = discord.Intents.default()  # Cannot use on_member_join
+        intents = discord.Intents.all()
         intents.message_content = True
 
         # Ensure the data folder exists before loading cogs
