@@ -12,7 +12,6 @@ import json
 from utils.load_files import load_text_prompt, load_chat_history
 from utils.rate_limiter import MixedRateLimiter
 from utils.discord_msg import get_referenced_message, get_recent_messages
-
 from PIL import Image
 import aiohttp
 from io import BytesIO
@@ -234,7 +233,7 @@ class AIChat(commands.Cog):
 
             # Check against rate limiter
             if not self.cooldown_manager.try_add_message(message.author):
-                await message.reply("You have exceeded the rate limit. Please try again later.", ephemeral=True)
+                await message.reply("You have exceeded the rate limit. Please try again later.")
                 return
 
             # Extract message content
