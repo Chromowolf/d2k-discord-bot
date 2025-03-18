@@ -99,7 +99,7 @@ class AIChat(commands.Cog):
 
             prompt = (
                 f"User (ID: {user_id}, Nickname: {user_nickname}, Timestamp: {timestamp}) says:\n"
-                f"```{message}```\n\n"
+                f"{message}\n\n"
             )
 
             logger.info(f"Sending prompt: \n{prompt}")
@@ -144,7 +144,7 @@ class AIChat(commands.Cog):
             ai_reply = response.text if response.text else "I couldn't generate a response. Try again!"
             response_json = response.to_json_dict()
             total_token_count = response_json.get("usage_metadata", {}).get("total_token_count", 0)
-            logger.info(f"Total token count of this request: {total_token_count}")
+            logger.debug(f"Total token count of this request: {total_token_count}")
             logger.debug(f"response info: \n{json.dumps(response.model_dump(), indent=2)}")
 
             # Format the final output
