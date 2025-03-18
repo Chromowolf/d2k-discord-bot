@@ -63,6 +63,7 @@ class AIChat(commands.Cog):
         self.aiclient = genai.Client(api_key=GEMINI_API_TOKEN)
         self.cooldown_manager = MixedRateLimiter()
         self.cooldown_manager.add_per_user_limit(3, 60)
+        self.cooldown_manager.add_per_user_limit(20, 3600)
         self.cooldown_manager.add_per_user_limit(50, 86400)
         self.cooldown_manager.add_global_limit(10, 60)
         self.cooldown_manager.add_global_limit(500, 86400)
@@ -117,7 +118,7 @@ class AIChat(commands.Cog):
                 f"{message}"
             )
 
-            logger.info(f"Sending prompt: \n{prompt}")
+            logger.debug(f"Sending prompt: \n{prompt}")
 
             # noinspection PyUnresolvedReferences
             await interaction.response.defer()  # Defer response to allow processing time
@@ -281,7 +282,7 @@ class AIChat(commands.Cog):
             info_to_log = f"Sending prompt with {len(images)} images: \n"
             for m in to_be_sent:
                 info_to_log += f"{m}\n"
-            logger.info(info_to_log)
+            logger.debug(info_to_log)
 
             # Show typing indicator
             async with message.channel.typing():
