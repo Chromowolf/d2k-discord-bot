@@ -197,6 +197,7 @@ Daily conversations are filled with jokes and memes.
 - Dan (aka daniel) *(Brazilian player)*
   - Discord user ID: 716266048055410770
   - Discord username: snkdan
+  - CNCnet nickname: Dan. Used "taro" for a while in Sept2024
   - Started playing in 2015.
   - Currently the best active player (Rank #1 in 1v1, 2v2, and 3v3).
   - Created his own player ranking list:
@@ -224,6 +225,7 @@ Daily conversations are filled with jokes and memes.
 
 - Aisi *(Slovakian player)*
   - Discord user ID: 424273042793955349
+  - CNCnet nickname: Aisi
   - Former #1 player (before 2025).
   - Very young but highly gifted; reached top rank within one year (started in 2021).
   - Known for his aggressive playstyle.
@@ -231,6 +233,7 @@ Daily conversations are filled with jokes and memes.
 
 - Pere (aka Perennie) *(Chinese player, bot creator)*
   - Discord user ID: 475221433576849408
+  - CNCnet nickname: Perennie
   - Started playing in 2015.
   - Top 3 player before 2018 but never ranked #1.
   - Strength: High production efficiency.
@@ -243,6 +246,7 @@ Daily conversations are filled with jokes and memes.
 
 - Gala (aka Galaxy) *(Romanian player)*
   - Discord user ID: 160889009143283712
+  - CNCnet nickname: Galaxy, Gala
   - One of the oldest active players (in terms of time spent playing, not age).
   - Currently a top 3 player (as of 2025).
   - Strengths: High production efficiency, good control.
@@ -253,6 +257,7 @@ Daily conversations are filled with jokes and memes.
 
 - Kipp (aka Kipper) *(UK player, server owner & admin)*
   - Discord user ID: 586492041978970112
+  - CNCnet nickname: Kipper17 at 2015, Kipp afterwards
   - Started playing before 2015.
   - #1 player from 2018 to 2022, later surpassed by Aisi but remains in the top 3.
   - Even though he may no longer be the best no-rush player after 2022, he has remained dominant in the small-map rush game (no-rule) scene until now.
@@ -267,6 +272,7 @@ Daily conversations are filled with jokes and memes.
 
 - Seb (aka [SW]Dune, [SW]Hawk) *(Romanian player)*
   - Discord user ID: 1007278943591739543
+  - CNCnet nickname: [SW]Dune, [SW]Hawk, Sebastian, Seb
   - Started playing before 2015.
   - Prefers 2v2 and 3v3, rarely plays 1v1.
   - Skillful player, ranked top 10 all-time.
@@ -276,6 +282,7 @@ Daily conversations are filled with jokes and memes.
 
 - Arma (aka Aarmaageedoon) *(Polish player)*
   - Discord user ID: 358349439473025024
+  - CNCnet nickname: Aarmaageedoon, Manu_v2
   - Started playing around 2017.
   - The most defensive Atreides player ever—famous for camping.
   - The biggest troll in the community—every single word he says is a joke.
@@ -285,6 +292,7 @@ Daily conversations are filled with jokes and memes.
 
 - Balrog (aka Sub-Zero, Yassae1996, Bal) *(Algerian player)*
   - Discord user ID: 1050046010346450964
+  - CNCnet nickname: Yassae1996, Balrog, Sub-Zero, Bal, Majinbuu
   - Started playing after 2022.
   - The most dedicated player ever—his progress has been remarkable, and he is almost in the top 10.
   - Has a brother named Silva.
@@ -305,6 +313,7 @@ Daily conversations are filled with jokes and memes.
 - Silva (aka Silvister, Carlos) *(Algerian player)*
   - Discord user ID: 1133492772393979944
   - Discord username: silivister, alexcarlos17
+  - CNCnet nickname: vf2, Silva, Carlos
   - Started playing after 2022, at the same time as his brother Balrog.
   - Similar skill level as Balrog but not as dedicated, so he is slightly less skilled.
   - Sometimes speaks Arabic in the server.
@@ -314,6 +323,7 @@ Daily conversations are filled with jokes and memes.
 - Franky (aka Franco, Frank) *(Algerian player)*
   - Discord user ID: 1130461169505796096
   - Discord username: franksteino
+  - CNCnet nickname: Franko, Franky, Truespeed
   - Started playing after 2018, pretty decent player but never made it into the top 10.
   - Considered the first player to use auto-clicker, making him controversial.
   - Very funny and trollish.
@@ -330,6 +340,7 @@ Daily conversations are filled with jokes and memes.
 
 - Elf (aka 精灵jingling) *(Chinese player)*
   - Discord user ID: 1051341529484116058
+  - CNCnet nickname: jingling, Elf
   - Started playing around 2018, a decent player.
   - Strong in 1v1 but weaker in team games.
   - Primarily plays Atreides, his Harkonnen is weaker.
@@ -341,6 +352,7 @@ Daily conversations are filled with jokes and memes.
 
 - UL (aka UnitLost) *(Chinese player)*
   - Discord user ID: 898564335989850153
+  - CNCnet nickname: UnitLost, [AI]Easy, PAIMON, Mobius, Descender
   - Started playing in 2015, quickly surpassed the "Old King" Shaokhan and became the best player from 2015 to 2018.
   - Not as active as before but still a top 6 player, especially in 1v1.
   - Strong with Harkonnen, but also good with Atreides and Ordos.
@@ -350,6 +362,7 @@ Daily conversations are filled with jokes and memes.
 
 - Shaokhan (aka Shao) *(Czech player)*
   - The earliest "best player," regarded as the "Old King."
+  - CNCnet nickname: Shaokhan, Shao
   - His first YouTube video dates back to 2011-08-09.
   - Retired after 2021.
   - Memes:
@@ -395,6 +408,7 @@ Daily conversations are filled with jokes and memes.
 
 - NJ (aka Nah) *(German player)*
   - Discord user ID: 610175266047787309
+  - CNCnet nickname: Nah, NJ
   - Appears to have a bad temper, but whenever he says something "angry," it's actually very funny.
   - Primarily plays Atreides, rarely plays Harkonnen.
   - Barely get a trooper efficiency greater than 30%, resulting weak force mix, vulnerable to harvs and devas.
@@ -422,6 +436,7 @@ Daily conversations are filled with jokes and memes.
 
 - Jo (aka Joseph, Youcef) *(Algerian player)*
   - Discord user ID: 803311870210998283
+  - CNCnet nickname: Joseph, Jo
   - The most memed person in the community since 2024.
   - Joined the server on 2023-12-23.
   - Very young, around 19 years old.
@@ -442,6 +457,7 @@ Daily conversations are filled with jokes and memes.
 
 - Riad (aka Raid, Amayass) *(Algerian player)*
   - Discord user ID: 882980217612824636
+  - CNCnet nickname: Riad, Raid, Amayass
   - Has played for many years but still doesn’t know the correct build order.
   - Seems hopeless and unlikely to improve.
 
@@ -470,6 +486,7 @@ Daily conversations are filled with jokes and memes.
 
 - Manu (aka TurtleManu, ManuDune) *(French player)*
   - Discord user ID: 779733763537633321.
+  - CNCnet nickname: Manu, TurtleManu
   - Started playing before 2015. An old player with respect to both the game and age.
   - Over 40 years old as of 2025.
   - APM around 60.
