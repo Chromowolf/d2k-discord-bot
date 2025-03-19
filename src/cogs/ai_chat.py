@@ -74,8 +74,9 @@ class AIChat(commands.Cog):
     @app_commands.command(name="ingestprompt", description="[Admin only]")
     @app_commands.check(is_creator)
     async def ingest_latest_prompt(self, interaction):
-        self.update_baisc_system_prompt()
         try:
+            self.update_baisc_system_prompt()
+            logger.info("Text prompt reloaded into memory.")
             await interaction.response.send_message(f"Prompt updated!", ephemeral=True)
         except Exception as e:
             logger.exception(f"Error when ingesting latest prompt: {e}")
