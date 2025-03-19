@@ -128,7 +128,7 @@ PvP: Used to block choke points and slowly push opponents back. Needs support un
 Devastator (Harkonnen)
 The most powerful and durable tank in the game, armed with twin plasma cannons. Can self-destruct, causing massive damage to nearby units and buildings.
 Strengths: Extreme durability, high damage output, and self-healing up to 50% HP.
-Weaknesses: Slow movement, short range, and vulnerable to kiting by Missile Tanks.
+Weaknesses: Slow movement, short range, and vulnerable to kiting by Missile Tanks. Especially vulnerable to Ordos' Deviators. Once deviated, the enemy can quickly self-destruct them. Therefore, it's not a good idea to build Devastators if there is an Ordos player on the enemy team."
 AI Battles: Best for steamrolling enemies with mass production.
 PvP: Effective against Sonic Tanks but weak against infantry swarms and Missile Tanks. Needs open terrain to avoid getting blocked by allies.
 
@@ -139,7 +139,6 @@ Strengths: Can turn enemy vehicles against them, disrupting enemy formations.
 Weaknesses: Low HP, long attack cooldown, and ineffective against infantry.
 AI Battles: Not very useful, except for stealing Harvesters from AI.
 PvP: Essential for Ordos strategy, as Ordos lacks heavy firepower. Often used to disrupt enemy lines or support attacks with shielding units like Harvesters.
-
 
 
 <Air units>
