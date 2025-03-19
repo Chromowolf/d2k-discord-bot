@@ -47,6 +47,116 @@ Besides the game-specific handicaps, players can also impose self-imposed handic
 For example, a stronger player can declare "no light" (also known as "ban light"), meaning they promise not to build the Light Factory, which is the structure that produces light vehicles such as Trikes and Quads.
 "Ban light" is a slightly milder handicap compared to 2*.
 
+### Dune2000 basic knowledge
+#### Units description
+<Dune 2000 infantries>
+Light Infantry
+The cheapest infantry unit, equipped with light armor and a 9mm RP rifle. It moves relatively fast and is effective against other infantry and light vehicles but deals minimal damage to heavy vehicles and buildings. Rarely used due to the better cost-effectiveness of Troopers, but can be useful for early defense against AI infantry rushes or for scouting and special tasks like baiting AI aggression.
+
+Trooper
+Also known as Heavy Infantry, Troopers wield a handheld rocket launcher effective against vehicles and buildings but weak against infantry. They offer high damage at a low cost, making them one of the most efficient units. Useful for early defense, countering tanks, and protecting key areas against enemy harassment. However, they are vulnerable to anti-infantry units like Sonic Tanks and Siege Tanks.
+
+Engineer
+Engineers capture enemy buildings, allowing access to their production. If a Construction Yard is taken, the player can construct that faction’s Palace and High-Tech Factory. In AI matches, Engineers can be used to dismantle enemy bases via building capture and resale. However, in PvP, they are often banned due to their disruptive potential.
+
+Fremen
+Stealthy native warriors of Arrakis, armed with rifles and rockets effective against both vehicles and infantry. They are available to House Atreides through the Palace but are too fragile to be viable in large-scale combat. AI-controlled Fremen can be dangerous, often prioritizing the player's Construction Yard in attacks.
+
+Sardaukar
+Elite troops of the Emperor, capable of attacking both infantry and vehicles with high damage and durability. In the original campaign, only the Emperor's forces can deploy them. In version 1.06, they are exclusive to House Harkonnen but come at a high cost. They are useful for defense and offense but are often outclassed by cheaper Troopers in PvP.
+
+Saboteur
+A stealth unit produced from the Ordos Palace, capable of instantly destroying buildings upon entry. It can charge up energy to enter stealth mode temporarily, allowing it to sneak into enemy bases. However, it is slow to produce and not widely used in PvP. AI-controlled Saboteurs can be a major threat, often targeting the player’s Construction Yard.
+
+Thumper
+A multiplayer-only unit that attracts Sandworms by vibrating the ground. It has no attack power but can be used strategically to lure Sandworms into enemy resource areas, disrupting their economy.
+
+Grenadier
+A new unit introduced in version 1.06 for House Atreides, using grenade attacks similar to Siege Tanks. Effective against infantry and light-to-medium armor but has short range and splash damage issues, making it unpopular. Rarely seen, except in special game modes like crate collection maps.
+
+Note: All infantry units can be crushed by enemy heavy vehicles unless they are standing on infantry rocks. Infantry rocks are a special type of terrain that only infantry can traverse, while light and heavy vehicles cannot move on them.
+
+<Dune 2000 Light Vehicles>
+Trike
+A fast-moving, three-wheeled vehicle equipped with a machine gun. Highly effective against infantry, decent against light and medium armor, but weak against heavy armor. It has a longer range than Light Infantry, allowing it to attack over walls. Used mainly for scouting, baiting AI units, and early PvP harassment. Very fragile, so avoid direct combat with anything other than infantry.
+
+Raider
+An upgraded version of the Trike exclusive to House Ordos, featuring higher speed, attack rate, and durability. Functions similarly to the Trike but is better at hit-and-run attacks and escaping pursuit. Its superior mobility makes it ideal for harassment and drawing enemy forces away.
+
+Quad
+A fast-moving vehicle with good damage against all vehicle types but moderate effectiveness against infantry. Highly versatile and cost-effective, making it a staple light factory unit. Used for scouting, harassment, and intercepting slow-moving enemy units. However, it is weak against infantry, especially Troopers, and should avoid direct engagements with them.
+
+Stealth Raider
+A special Ordos unit in version 1.06, combining the Raider's stats with the Fremen’s permanent stealth. Considered overpowered due to its ability to mass-produce and disrupt enemy operations undetected. In AI matches, it can lure enemy forces away or block AI harvesting. In PvP, it is controversial, as it can stealthily block refineries and assist Saboteurs in ambushes. However, it must reveal itself before attacking, making it vulnerable in direct combat.
+
+<Dune 2000 Heavy Vehicles>
+Harvester
+The Harvester collects spice and delivers it to the Refinery for income. It has thick armor and high HP, making it difficult to destroy. It can carry up to 700 spice units (modifiable in special maps) and automatically regenerates HP up to 50% when damaged. Harvesters can use Carryalls for transport but may get delayed when multiple Harvesters wait for the same Carryall.
+
+In AI matches, destroying enemy Harvesters early can cripple their economy. In PvP, protecting your Harvesters while targeting the enemy’s is crucial. Extra Harvesters can also be used as damage sponges to absorb fire, especially against Sonic Tanks, or to crush infantry.
+
+Combat Tanks
+Atreides Combat Tank
+A balanced tank with moderate speed, armor, and firepower. Effective against all unit types and can crush infantry. While useful in AI battles for intercepting units and protecting resource areas, it is often replaced by Sonic Tanks or Missile Tanks in PvP. It struggles against Devastators in direct combat.
+
+Harkonnen Combat Tank
+Slower but more durable than other faction tanks, making it excellent for prolonged engagements. Performs well against small-scale attacks but is outclassed by Devastators and Siege Tanks in larger battles. In PvP, it is strong early on but later gets replaced by more advanced units. However, its durability makes it effective for disrupting enemy defenses and demolishing buildings.
+
+Ordos Combat Tank
+The fastest Combat Tank but with the lowest HP. It shares the same speed as the Quad, making it ideal for hit-and-run tactics, intercepting enemy reinforcements, and harassing Harvesters. However, it lacks durability and is not well-suited for direct engagements, especially against human players who can counter infantry crushing tactics. In PvP, it is best paired with Quads for mobility-based attacks.
+
+MCV (Mobile Construction Vehicle)
+A slow, unarmed, and expensive unit that deploys into a Construction Yard, enabling base expansion. It cannot revert to an MCV once deployed. Used for creating new bases when additional resources and production facilities are needed. Typically purchased at a discount from the Starport due to its high cost.
+In PvP, securing or destroying an enemy's MCV is crucial. In late-game, surplus MCVs can be used aggressively as shields or distractions.
+
+Missile Tank
+A long-range unit dealing high damage to vehicles and aircraft while being weak against infantry. It has moderate speed, slow attack rate, and low HP, making it vulnerable to light units. Ordos cannot produce it but can purchase it from the Starport, making it a valuable asset for them.
+In AI battles, it excels in defensive formations with Repair Pads and Sonic Tanks. In PvP, it is effective at kiting Devastators and supporting Sonic Tanks. However, it should avoid direct fights with Sonic Tanks and must be protected from infantry swarms.
+
+Siege Tank
+Specialized in anti-infantry and light unit combat, dealing splash damage but weak against armored units and buildings. It is slow in both movement and attack speed, with low durability, making it vulnerable to light unit swarms.
+In combat, Siege Tanks are best used behind main battle units to prevent enemy infantry from soaking damage. They are also effective when stationed behind Missile Turrets in AI battles. In PvP, eliminating enemy Siege Tanks early ensures better survival for your infantry.
+
+Sonic Tank (Atreides & Fremen)
+Fires a sonic wave that damages enemies in a straight line up to 7 tiles and in a small arc. The 4th tile receives the highest damage, while the closer or farther units take less. Highly effective against infantry and light armor, but less so against heavy armor.
+Strengths: High area damage, best against groups of light units.
+Weaknesses: Slow, vulnerable to close-range attacks, and can harm allies if mispositioned.
+AI Battles: Strong for defensive lines, often paired with Missile Tanks.
+PvP: Used to block choke points and slowly push opponents back. Needs support units to protect against close-range threats.
+
+
+Devastator (Harkonnen)
+The most powerful and durable tank in the game, armed with twin plasma cannons. Can self-destruct, causing massive damage to nearby units and buildings.
+Strengths: Extreme durability, high damage output, and self-healing up to 50% HP.
+Weaknesses: Slow movement, short range, and vulnerable to kiting by Missile Tanks.
+AI Battles: Best for steamrolling enemies with mass production.
+PvP: Effective against Sonic Tanks but weak against infantry swarms and Missile Tanks. Needs open terrain to avoid getting blocked by allies.
+
+
+Deviator (Ordos)
+Fires gas rounds that temporarily control enemy vehicles. The effect wears off faster if the unit is attacked.
+Strengths: Can turn enemy vehicles against them, disrupting enemy formations.
+Weaknesses: Low HP, long attack cooldown, and ineffective against infantry.
+AI Battles: Not very useful, except for stealing Harvesters from AI.
+PvP: Essential for Ordos strategy, as Ordos lacks heavy firepower. Often used to disrupt enemy lines or support attacks with shielding units like Harvesters.
+
+
+
+<Air units>
+Carryall
+An automated air transport unit that carries Harvesters between spice fields and Refineries. It can also transport damaged vehicles to Repair Pads.
+Strengths: High HP, fast movement, only vulnerable to Missile Tanks and Missile Turrets. It is invulnerable while carrying a unit.
+Weaknesses: Often causes delays by keeping Harvesters stationary while waiting for transport.
+AI Battles: Can be manually controlled on some maps to protect Harvesters. Attacking enemy Harvesters waiting for Carryalls is an effective strategy.
+PvP: Rarely used, as High-Tech Factories are not commonly built, and Starports are prioritized for combat units.
+
+Ornithopter (Atreides Only)
+Atreides' exclusive air unit, the fastest unit in the game. It drops 500-pound bombs, dealing high damage to infantry and light armor, and moderate damage to heavy armor.
+Strengths: Fast, powerful against infantry, and can destroy buildings in multiple strikes.
+Weaknesses: Low HP, vulnerable to Missile Tanks and Missile Turrets.
+AI Battles: Devastating against enemy structures and units, can be used in some campaign missions for efficient attacks.
+PvP: Best for targeting key enemy structures like Starports and Heavy Factories, but must avoid missile defenses.
+
 ### Server History & Structure
 The Discord server "Missionaria Protectiva" was founded in 2023.
 - The current Server Owner is Kipp.
