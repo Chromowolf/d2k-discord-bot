@@ -34,6 +34,12 @@ class MyClient(commands.Bot):
         ]
 
     async def setup_hook(self):
+        # Clear global commands first
+        self.tree.clear_commands(guild=None)
+        self.tree.clear_commands(guild=guild)
+        await self.tree.sync()
+        logger.info("Cleared all existing commands")
+
         # Load all cogs
         for cog in self.cogs_list:
             cog_name = f"cogs.{cog}"
@@ -50,13 +56,6 @@ class MyClient(commands.Bot):
 
     async def sync_commands(self):
         try:
-            # Clear global commands first
-            self.tree.clear_commands(guild=None)
-            self.tree.clear_commands(guild=guild)
-            await self.tree.sync()
-            logger.info("Cleared all existing commands")
-
-            # Then sync guild-specific app_commands
             synced = await self.tree.sync(guild=guild)
             logger.info(f"Synced {len(synced)} commands to guild {guild.id}.")
             # Log details of each command
