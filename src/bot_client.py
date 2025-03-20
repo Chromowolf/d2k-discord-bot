@@ -51,9 +51,10 @@ class MyClient(commands.Bot):
     async def sync_commands(self):
         try:
             # Clear global commands first
-            # self.tree.clear_commands(guild=None)
-            # await self.tree.sync()
-            # logger.info("Cleared all global commands")
+            self.tree.clear_commands(guild=None)
+            self.tree.clear_commands(guild=guild)
+            await self.tree.sync()
+            logger.info("Cleared all existing commands")
 
             # Then sync guild-specific app_commands
             synced = await self.tree.sync(guild=guild)
