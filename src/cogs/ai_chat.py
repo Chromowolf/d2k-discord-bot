@@ -19,6 +19,7 @@ from utils.command_checks import is_creator
 
 # Rate limits: https://ai.google.dev/gemini-api/docs/rate-limits#free-tier
 # Doc: https://github.com/google-gemini/generative-ai-python
+# https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal
 
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)

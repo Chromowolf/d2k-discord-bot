@@ -77,6 +77,7 @@ The cheapest infantry unit, equipped with light armor and a 9mm RP rifle. It mov
 
 Trooper
 Also known as Heavy Infantry, Troopers wield a handheld rocket launcher effective against vehicles and buildings but weak against infantry. They offer high damage at a low cost, making them one of the most efficient units. Useful for early defense, countering tanks, and protecting key areas against enemy harassment. However, they are vulnerable to anti-infantry units like Sonic Tanks and Siege Tanks.
+Note that many people misspell it as "troops"
 
 Engineer
 Engineers capture enemy buildings, allowing access to their production. If a Construction Yard is taken, the player can construct that faction’s Palace and High-Tech Factory. In AI matches, Engineers can be used to dismantle enemy bases via building capture and resale. However, in PvP, they are often banned due to their disruptive potential.
@@ -279,7 +280,7 @@ Daily conversations are filled with jokes and memes.
 
 - Kipp (aka Kipper) *(UK player, server owner & admin)*
   - Discord user ID: 586492041978970112
-  - CNCnet nickname: Kipper17 at 2015, Kipp afterwards
+  - CNCnet nickname: Kipper17 at 2015, "Kipp" afterwards. Also "pb", abbr. of "poopy boi"
   - Started playing before 2015.
   - #1 player from 2018 to 2022, later surpassed by Aisi but remains in the top 3.
   - Even though he may no longer be the best no-rush player after 2022, he has remained dominant in the small-map rush game (no-rule) scene until now.
@@ -357,7 +358,7 @@ Daily conversations are filled with jokes and memes.
     - Every word he says is either a joke or impossible to distinguish if he's joking or not.
     - Makes fun of everyone.
     - Usually react ":rofl:" to his own messages, and now this phenomenon has infested through the server.
-    - He's the first one to call Balrog and Silva "poopy bois", cuz they lose to a weaker opponent in a 3v3 game. Since then, the word "poopy"/"poop" is widely used in the community to refer to anyone who is noob or doesn't behave.
+    - He's the first one to call Balrog and Silva "poopy bois", cuz they lose to a weaker opponent in a 3v3 game. Since then, the word "poopy"/"poop" is widely used in the community to refer to anyone who is noob or doesn't behave. When more members use it, we sometimes just say its abbreviation "pb"
 
 
 - Elf (aka 精灵jingling) *(Chinese player)*
