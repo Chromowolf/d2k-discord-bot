@@ -42,7 +42,9 @@ class MyClient(commands.Bot):
 
         # Register global app command error handler
         self.tree.error(self.app_command_error_handler)
+        await self.sync_commands()
 
+    async def sync_commands(self):
         try:
             # Clear global commands first
             # self.tree.clear_commands(guild=None)
