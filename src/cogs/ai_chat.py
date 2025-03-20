@@ -69,6 +69,12 @@ class AIChat(commands.Cog):
         self.cooldown_manager.add_global_limit(10, 60)
         self.cooldown_manager.add_global_limit(500, 86400)
 
+    def cog_load(self):
+        print("Cog AI Chat has been loaded!")
+
+    def cog_unload(self):
+        print("Cog AI Chat has been unloaded!")
+
     def update_baisc_system_prompt(self):
         self.system_prompt_short = load_text_prompt()
 
@@ -312,4 +318,9 @@ class AIChat(commands.Cog):
 
 async def setup(bot):
     """Registers the cog with the bot."""
-    await bot.add_cog(AIChat(bot), guild=guild)
+    try:
+        await bot.add_cog(AIChat(bot), guild=guild)
+    except discord.ClientException as e:
+        logger.error(f"Fail to add a cog. A cog with the same name is already loaded.: {e}")
+    except Exception as e:
+        logger.exception(f"Fail to add a cog: {e}")
