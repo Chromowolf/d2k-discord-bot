@@ -183,7 +183,13 @@ class AIChat(commands.Cog):
             # logger.debug(f"Total token count of this request: {total_token_count}")
             # logger.debug(f"response info: \n{json.dumps(response.model_dump(), indent=2)}")
 
-            ai_reply = await self.generate_ai_reply(prompt, use_chat_history=use_chat_history)
+            ai_reply, response_info = await self.generate_ai_reply(prompt, use_chat_history=use_chat_history)
+            usage_metadata = response_info.get("usage_metadata", {})
+            logger.info(
+                f"{user_nickname} (ID: {user_id}) used AI chat. "
+                f"Prompt tokens: {usage_metadata.get("prompt_token_count", None)}, "
+                f"Response tokens: {usage_metadata.get("candidates_token_count", None)}."
+            )
 
             # Format the final output
             final_response = f"**{user_nickname} (at {timestamp}):** {message}\n\n**Response:** {ai_reply}"
@@ -233,9 +239,10 @@ class AIChat(commands.Cog):
         response_json = response.to_json_dict()
         total_token_count = response_json.get("usage_metadata", {}).get("total_token_count", 0)
         logger.debug(f"Total token count of this request: {total_token_count}")
-        logger.debug(f"response info: \n{json.dumps(response.model_dump(), indent=2)}")
+        response_info = response.model_dump()
+        logger.debug(f"response info: \n{json.dumps(response_info, indent=2)}")
 
-        return ai_reply
+        return ai_reply, response_info
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -307,9 +314,15 @@ class AIChat(commands.Cog):
             # Show typing indicator
             async with message.channel.typing():
                 # Use long prompt for more context
-                ai_reply = await self.generate_ai_reply(
+                ai_reply, response_info = await self.generate_ai_reply(
                     to_be_sent + images,
                     use_chat_history=False
+                )
+                usage_metadata = response_info.get("usage_metadata", {})
+                logger.info(
+                    f"{user_nickname} (ID: {user_id}) used AI interaction. "
+                    f"Prompt tokens: {usage_metadata.get("prompt_token_count", None)}, "
+                    f"Response tokens: {usage_metadata.get("candidates_token_count", None)}."
                 )
                 await message.reply(ai_reply[:1990])
 
