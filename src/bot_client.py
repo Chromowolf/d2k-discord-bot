@@ -38,7 +38,11 @@ class MyClient(commands.Bot):
         for cog in self.cogs_list:
             cog_name = f"cogs.{cog}"
             logger.info(f"Loading extension {cog_name}")
-            await self.load_extension(cog_name)
+            await self.load_extension(cog_name)  # the app commands in the cogs are auto added
+
+        # Manually add the commands to the command tree
+        self.tree.add_command(self.loadext, guild=guild)
+        self.tree.add_command(self.unloadext, guild=guild)
 
         # Register global app command error handler
         self.tree.error(self.app_command_error_handler)
