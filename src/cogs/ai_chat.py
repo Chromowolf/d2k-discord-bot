@@ -11,7 +11,7 @@ from config import D2K_SERVER_ID, GEMINI_API_TOKEN
 import json
 from utils.load_files import load_text_prompt, load_chat_history
 from utils.rate_limiter import MixedRateLimiter
-from utils.discord_msg import get_referenced_message, get_recent_messages
+from utils.discord_msg import get_referenced_message, get_recent_messages, format_message
 from PIL import Image
 import aiohttp
 from io import BytesIO
@@ -24,7 +24,7 @@ from utils.command_checks import is_creator
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
 
-# logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("google_genai.models").setLevel(logging.WARNING)
 
@@ -240,17 +240,26 @@ class AIChat(commands.Cog):
             ###################
             # Get contexts
             ###################
+
+            # For recent messages, only read the message content
             recents = await get_recent_messages(message.channel)
             to_be_sent = ["Recent messages in the channel:"]
             to_be_sent += recents
 
-            rpl = await get_referenced_message(message)
-            if rpl:
-                rpl_chain = "Reply chain: \n" + "\n".join(rpl)
-            else:
-                rpl_chain = ""
-
-            to_be_sent.append(rpl_chain)
+            # For reply chain, read all the attached images
+            total_images = 0
+            reply_chain_messages = await get_referenced_message(message)
+            if reply_chain_messages:
+                to_be_sent.append("Reply chain of the latest message:")
+            for msg in reply_chain_messages:
+                to_be_sent.append(format_message(msg.content))
+                if msg.attachments:
+                    for attachment in msg.attachments:
+                        if attachment.content_type and attachment.content_type.startswith('image/'):
+                            image = await download_image(attachment.url)
+                            if image:
+                                total_images += 1
+                                to_be_sent.append(image)
 
             # Get timestamp of the message and format it (UTC time)
             timestamp = message.created_at.strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -263,25 +272,27 @@ class AIChat(commands.Cog):
                 f"**The timestamps are just for your reference to provide more context. DO NOT add these prefixes or any other prefix when you reply! Your output should only be your reply, without any extra text.**"
             )
 
-            # Handle image attachments
-            images = []
             if message.attachments:
                 for attachment in message.attachments:
                     if attachment.content_type and attachment.content_type.startswith('image/'):
                         image = await download_image(attachment.url)
                         if image:
-                            images.append(image)
+                            total_images += 1
+                            to_be_sent.append(image)
 
-            info_to_log = f"Sending prompt with {len(images)} images: \n"
+            info_to_log = f"Sending prompt with {total_images} images: \n"
             for m in to_be_sent:
-                info_to_log += f"{m}\n"
+                if isinstance(m, str):
+                    info_to_log += f"{m}\n"
+                else:
+                    info_to_log += f"<IMG>\n"
             logger.debug(info_to_log)
 
             # Show typing indicator
             async with message.channel.typing():
                 # Use long prompt for more context
                 ai_reply, response_info = await self.generate_ai_reply(
-                    to_be_sent + images,
+                    to_be_sent,
                     use_chat_history=False
                 )
                 usage_metadata = response_info.get("usage_metadata", {})

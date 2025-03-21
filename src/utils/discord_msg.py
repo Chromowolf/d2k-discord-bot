@@ -80,7 +80,7 @@ async def send_a_message_then_delete(bot, channel_id, message="Test message", de
         logger.exception(f"Unexpected error when deleting message in {channel.name} (ID: {channel.id}): {e}")
 
 
-async def format_message(message):
+def format_message(message):
     """Format a single message for the prompt."""
     user = message.author
     user_id = user.id
@@ -106,7 +106,7 @@ async def get_recent_messages(channel, limit=20) -> list[str]:
     messages = []
     try:
         async for msg in channel.history(limit=limit):
-            messages.append(await format_message(msg))
+            messages.append(format_message(msg))
     except (discord.NotFound, discord.Forbidden, discord.HTTPException) as e:
         logger.warning(f"Error getting channel context: {e}")
     except Exception as e:
@@ -117,7 +117,7 @@ async def get_recent_messages(channel, limit=20) -> list[str]:
     return messages
 
 
-async def get_referenced_message(message, depth=0, max_depth=10) -> list[str]:
+async def get_referenced_message(message: discord.Message, depth=0, max_depth=10) -> list[discord.Message]:
     """
     Recursively get the referenced messages in a reply chain.
 
@@ -127,7 +127,7 @@ async def get_referenced_message(message, depth=0, max_depth=10) -> list[str]:
         max_depth: Maximum depth to traverse
 
     Returns:
-        String representation of the reply chain in chronological order
+        The message reply chain in chronological order
     """
     if depth >= max_depth or not message.reference or not message.reference.message_id:
         return []
@@ -138,11 +138,8 @@ async def get_referenced_message(message, depth=0, max_depth=10) -> list[str]:
         # Recursively get earlier messages in the chain first
         earlier_messages = await get_referenced_message(referenced_msg, depth + 1, max_depth)
 
-        # Add the current referenced message
-        formatted_msg = await format_message(referenced_msg)
-
         # Return in chronological order (earliest first)
-        return earlier_messages + [formatted_msg]
+        return earlier_messages + [referenced_msg]
 
     except (discord.NotFound, discord.Forbidden, discord.HTTPException) as e:
         logger.warning(f"Error fetching referenced message: {e}")
