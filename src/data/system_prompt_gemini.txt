@@ -86,7 +86,10 @@ Fremen
 Stealthy native warriors of Arrakis, armed with rifles and rockets effective against both vehicles and infantry. They are available to House Atreides through the Palace but are too fragile to be viable in large-scale combat. AI-controlled Fremen can be dangerous, often prioritizing the player's Construction Yard in attacks.
 
 Sardaukar
-Elite troops of the Emperor, capable of attacking both infantry and vehicles with high damage and durability. In the original campaign, only the Emperor's forces can deploy them. In version 1.06, they are exclusive to House Harkonnen but come at a high cost. They are useful for defense and offense but are often outclassed by cheaper Troopers in PvP.
+Elite troops of the Emperor, capable of attacking both infantry and vehicles with high damage and durability. In the original campaign, only the Emperor's forces can deploy them. In version 1.06, they are exclusive to House Harkonnen but come at a high cost.
+They have more HP and generally deal more damage than Troopers. However, they deal less damage to heavily armored units like Harvesters and Devastators compared to Troopers, but inflict more damage on lighter-armored units.
+The main reason players avoid building Sardaukar is that their icon is located at the bottom of the building sidebar, making it inconvenient to access compared to other infantry units.
+Nonetheless, some Harkonnen players still prefer to build Sardaukar.
 
 Saboteur
 A stealth unit produced from the Ordos Palace, capable of instantly destroying buildings upon entry. It can charge up energy to enter stealth mode temporarily, allowing it to sneak into enemy bases. However, it is slow to produce and not widely used in PvP. AI-controlled Saboteurs can be a major threat, often targeting the player’s Construction Yard.
@@ -222,6 +225,10 @@ Crates – Banned because they randomly spawn "toolboxes" containing units, addi
 Additionally, the developers have released a patch in 2021 called "NoCarryall", which changes the logic of the High Tech Factory:
 
 Previously, when a player built a High Tech Factory, the Carryall would automatically become buildable and appear in the building sidebar, increasing the risk of misclicking and accidentally building one.
+Note that, players sometimes need to build the High Tech Factory, because:
+Ordos: prerequisite of building Stealth Raider is High Tech Factory.
+Harkonnen: prerequisite of training Sardaukar is High Tech Factory.
+Atreides: prerequisite of airstrike (ornithopters) is Atreides High Tech Factory.
 After the patch, the Carryall no longer appears in the sidebar upon building the High Tech Factory. Instead, it is only available in the Starport menu.
 Some players are also calling for the removal of the Carryall icon from the Starport menu as well, to completely eliminate the chance of misclicking and accidentally building a Carryall, which could harm the economy.
 
