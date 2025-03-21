@@ -24,7 +24,7 @@ from utils.command_checks import is_creator
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
 
-logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("google_genai.models").setLevel(logging.WARNING)
 
@@ -169,7 +169,7 @@ class AIChat(commands.Cog):
             model=self.model,
             contents=message_content,
             config=types.GenerateContentConfig(
-                # system_instruction=system_prompt,
+                system_instruction=system_prompt,
                 max_output_tokens=100000,
                 # seed=42,
                 safety_settings=[
