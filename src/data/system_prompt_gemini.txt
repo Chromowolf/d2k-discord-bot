@@ -171,6 +171,9 @@ Strengths: High HP, fast movement, only vulnerable to Missile Tanks and Missile 
 Weaknesses: Often causes delays by keeping Harvesters stationary while waiting for transport.
 AI Battles: Can be manually controlled on some maps to protect Harvesters. Attacking enemy Harvesters waiting for Carryalls is an effective strategy.
 PvP: Rarely used, as High-Tech Factories are not commonly built, and Starports are prioritized for combat units.
+Actually, in PvP games, the Carryall is worse than useless: it has a negative effect. Since players typically have a large number of Harvesters in real matches and spice is abundant on the map, using Carryalls to transport Harvesters for mining is actually less efficient than letting the Harvesters move on their own.
+This is because the Carryall must first fly over to the Harvester, pick it up, then fly from the spice field to the Refinery or back, which often takes longer than if the Harvester simply traveled on its own.
+Moreover, Dune's logic for handling Carryall transport is poor. If multiple Harvesters need transportation but only a few Carryalls are available, all other Harvesters will remain stationary, queuing up and waiting for the Carryalls to process them one by one.
 
 Ornithopter (Atreides Only)
 Atreides' exclusive air unit, the fastest unit in the game. It drops 500-pound bombs, dealing high damage to infantry and light armor, and moderate damage to heavy armor.
@@ -178,6 +181,13 @@ Strengths: Fast, powerful against infantry, and can destroy buildings in multipl
 Weaknesses: Low HP, vulnerable to Missile Tanks and Missile Turrets.
 AI Battles: Devastating against enemy structures and units, can be used in some campaign missions for efficient attacks.
 PvP: Best for targeting key enemy structures like Starports and Heavy Factories, but must avoid missile defenses.
+
+<Special units>
+Sandworm
+The Sandworm spawns randomly on the map and belongs to an independent faction, not controlled by any player. Players cannot build it. It slowly roams across the sand (the white, non-buildable terrain), searching for player-controlled vehicles to devour.
+When it consumes three vehicles (this value can be customized when creating the map; the parameter is called "Sandworm Appetite" and defaults to 3), it will hibernate and respawn later.
+The Sandworm is invincible—it cannot be killed. However, if it takes enough damage, it will hibernate (just like when it has eaten three vehicles) and will respawn at the location where it was "killed."
+Sandworms can be disabled before the game starts, and is usually disabled for PvP games.
 
 ### Server History & Structure
 The Discord server "Missionaria Protectiva" was founded in 2023.
@@ -202,6 +212,18 @@ The Discord server "Missionaria Protectiva" was founded in 2023.
 
 There is no "best" house in Dune 2000—it depends on the map and ruleset.
 Since most players currently play Habbanya Erg 5.4.6 under the 8-min no rush rule, Ordos is considered the weakest faction.
+
+Important note:
+In multiplayer games, especially under the 8-minute no-rush rule, we often ban the following units:
+Turrets (Gun Turret and Missile Turret, the two defensive buildings) – They tend to prolong matches and make the game even more boring.
+Engineers – Banned for a similar reason. They are mainly used for sneaky attacks but become largely ineffective once players have a considerable number of units, which is usually the case in an 8-minute no-rush rule match. Moreover, engineers take up a slot in the building sidebar, increasing the chances of a player misclicking and training one instead of the more useful infantry unit—the Trooper.
+Sandworms – Banned because they add uncertainty to the game, making it less skill-based and more luck-based. Sandworms do not belong to any player (they cannot be built) and randomly wander around the map, devouring players' vehicle units, especially Harvesters. If a player's Harvester is unfortunate enough to be eaten early in the game, it can severely impact their economy.
+Crates – Banned because they randomly spawn "toolboxes" containing units, adding unnecessary chaos and uncertainty.
+Additionally, the developers have released a patch in 2021 called "NoCarryall", which changes the logic of the High Tech Factory:
+
+Previously, when a player built a High Tech Factory, the Carryall would automatically become buildable and appear in the building sidebar, increasing the risk of misclicking and accidentally building one.
+After the patch, the Carryall no longer appears in the sidebar upon building the High Tech Factory. Instead, it is only available in the Starport menu.
+Some players are also calling for the removal of the Carryall icon from the Starport menu as well, to completely eliminate the chance of misclicking and accidentally building a Carryall, which could harm the economy.
 
 ### Top Players in Dune History
 - Shaokhan (Shao) — Best player before 2015, leading by a wide margin.
