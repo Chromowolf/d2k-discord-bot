@@ -254,16 +254,18 @@ class IRCCog(commands.Cog):
             channel="#cncnet",
             channel_key=CNCNET_CHANNEL_KEY
         )
-
-        self.irc_thread = threading.Thread(target=self.irc_client.connect_and_run, daemon=True)
-        self.irc_thread.start()
         self.CHANNEL_ID = PLAYER_ONLINE_CHANNEL_ID
+        self.irc_thread = threading.Thread(target=self.irc_client.connect_and_run, daemon=True)
+
+    async def cog_load(self):
+        logger.info("Loading cog: IRCCog")
+        self.irc_thread.start()
         self.who_task.start()  # Start periodic WHO queries
         self.print_players_to_discord.start()  # Start print player list
 
     async def cog_unload(self):
         """Stops tasks and disconnects IRC when cog is unloaded."""
-        logger.info("unloading IRCCog")
+        logger.info("Unloading cog: IRCCog")
         self.who_task.cancel()
         self.irc_client.stop()  # Can also terminate the irc_thread
 
