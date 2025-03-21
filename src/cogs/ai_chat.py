@@ -252,7 +252,7 @@ class AIChat(commands.Cog):
             if reply_chain_messages:
                 to_be_sent.append("Reply chain of the latest message:")
             for msg in reply_chain_messages:
-                to_be_sent.append(format_message(msg.content))
+                to_be_sent.append(format_message(msg))
                 if msg.attachments:
                     for attachment in msg.attachments:
                         if attachment.content_type and attachment.content_type.startswith('image/'):

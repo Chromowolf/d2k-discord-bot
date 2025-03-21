@@ -80,7 +80,7 @@ async def send_a_message_then_delete(bot, channel_id, message="Test message", de
         logger.exception(f"Unexpected error when deleting message in {channel.name} (ID: {channel.id}): {e}")
 
 
-def format_message(message):
+def format_message(message: discord.Message):
     """Format a single message for the prompt."""
     user = message.author
     user_id = user.id
