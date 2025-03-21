@@ -169,7 +169,7 @@ class AIChat(commands.Cog):
             model=self.model,
             contents=message_content,
             config=types.GenerateContentConfig(
-                system_instruction=system_prompt,
+                # system_instruction=system_prompt,
                 max_output_tokens=100000,
                 # seed=42,
                 safety_settings=[
