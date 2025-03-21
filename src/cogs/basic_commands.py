@@ -8,6 +8,8 @@ from config import D2K_SERVER_ID, PLAYER_ONLINE_CHANNEL_ID
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
 
+dune2000_icon_url = "https://media.discordapp.net/attachments/1130464471027044405/1224392395081121994/Dune2000LogoWithGlow.png?ex=661d5347&is=660ade47&hm=65f42ba3fd2280b119ddc3e0066503b2e8e76314203c1fb6d0ca60a4a3fa3859&=&format=webp&quality=lossless"
+
 
 class BasicCommands(commands.Cog):
     """
@@ -40,6 +42,47 @@ class BasicCommands(commands.Cog):
                 f"For further information about bot commands, type slash \"/\""
             )
 
+    @app_commands.command(name="help", description="List all the available commands of the bot.")
+    @app_commands.checks.cooldown(1, 60, key=lambda i: (i.guild_id, i.user.id))
+    async def help(self, interaction):
+        embed = discord.Embed(
+            title="Dune 2000 Bot Commands",
+            description="Here is a list of available commands you can use:",
+            color=discord.Color.blue()
+        )
+        embed.set_thumbnail(
+            url=dune2000_icon_url
+        )
+
+        embed.add_field(
+            name="📥 /install",
+            value="Displays how to install **Dune 2000** with installation links.",
+            inline=False
+        )
+        embed.add_field(
+            name="📜 /rules",
+            value="Presents the **8-Minute No Rush** gameplay guidelines.",
+            inline=False
+        )
+        embed.add_field(
+            name="🎭 /excuse",
+            value="Generates a **random excuse** for losing a match.",
+            inline=False
+        )
+        embed.add_field(
+            name="▶️ /youtube",
+            value="Displays the **YouTube channels** of the players.",
+            inline=False
+        )
+        embed.add_field(
+            name="💬 /chat & /chat2",
+            value="Start a **single-round conversation** with the bot (no memory, no context preservation).",
+            inline=False
+        )
+
+        embed.set_footer(text="Use slash '/' to see available commands in Discord!")
+        await interaction.response.send_message(embed=embed)
+
     @app_commands.command(name="install", description="How to install Dune2000.")
     @app_commands.checks.cooldown(1, 60, key=lambda i: (i.guild_id, i.user.id))
     async def install(self, interaction):
@@ -49,7 +92,8 @@ class BasicCommands(commands.Cog):
             color=discord.Color.purple()
         )
         embed.set_thumbnail(
-            url="https://media.discordapp.net/attachments/1130464471027044405/1224392395081121994/Dune2000LogoWithGlow.png?ex=661d5347&is=660ade47&hm=65f42ba3fd2280b119ddc3e0066503b2e8e76314203c1fb6d0ca60a4a3fa3859&=&format=webp&quality=lossless")
+            url=dune2000_icon_url
+        )
         embed.add_field(
             name="Windows",
             value="[Download](https://www.mediafire.com/file/zmrkm61izim9s47/Dune2000_All_in_one_Installer.exe/file)",
