@@ -39,7 +39,7 @@ class BasicCommands(commands.Cog):
                 f"[Tutorial Video](https://www.youtube.com/watch?v=4sUHYgLlbiw)\n"
                 f"You can also check who is currently online on CnCNet in this channel: "
                 f"https://discord.com/channels/{D2K_SERVER_ID}/{PLAYER_ONLINE_CHANNEL_ID}\n"
-                f"For further information about bot commands, type slash \"/\""
+                f"For further information about bot commands, type \"/help\""
             )
 
     @app_commands.command(name="help", description="List all the available commands of the bot.")
