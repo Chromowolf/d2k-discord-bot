@@ -69,10 +69,10 @@ class AIChat(commands.Cog):
         self.cooldown_manager.add_global_limit(10, 60)
         self.cooldown_manager.add_global_limit(500, 86400)
 
-    def cog_load(self):
+    async def cog_load(self):
         logger.info("Cog AI Chat has been loaded!")
 
-    def cog_unload(self):
+    async def cog_unload(self):
         logger.info("Cog AI Chat has been unloaded!")
 
     def update_baisc_system_prompt(self):

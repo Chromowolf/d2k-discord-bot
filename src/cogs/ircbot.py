@@ -261,7 +261,7 @@ class IRCCog(commands.Cog):
         self.who_task.start()  # Start periodic WHO queries
         self.print_players_to_discord.start()  # Start print player list
 
-    def cog_unload(self):
+    async def cog_unload(self):
         """Stops tasks and disconnects IRC when cog is unloaded."""
         logger.info("unloading IRCCog")
         self.who_task.cancel()
