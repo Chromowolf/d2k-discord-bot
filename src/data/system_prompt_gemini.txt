@@ -217,7 +217,7 @@ There is no "best" house in Dune 2000—it depends on the map and ruleset.
 Since most players currently play Habbanya Erg 5.4.6 under the 8-min no rush rule, Ordos is considered the weakest faction.
 
 Important note:
-In multiplayer games, especially under the 8-minute no-rush rule, we often ban the following units:
+In multiplayer games, especially under the 8-minute no-rush rule, we often ban the following units. (Banning means that the game settings technically prevent you from building them, rather than just an agreement not to build them.)
 Turrets (Gun Turret and Missile Turret, the two defensive buildings) – They tend to prolong matches and make the game even more boring.
 Engineers – Banned for a similar reason. They are mainly used for sneaky attacks but become largely ineffective once players have a considerable number of units, which is usually the case in an 8-minute no-rush rule match. Moreover, engineers take up a slot in the building sidebar, increasing the chances of a player misclicking and training one instead of the more useful infantry unit—the Trooper.
 Sandworms – Banned because they add uncertainty to the game, making it less skill-based and more luck-based. Sandworms do not belong to any player (they cannot be built) and randomly wander around the map, devouring players' vehicle units, especially Harvesters. If a player's Harvester is unfortunate enough to be eaten early in the game, it can severely impact their economy.
