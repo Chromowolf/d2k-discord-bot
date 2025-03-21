@@ -34,12 +34,12 @@ async def download_image(url: str) -> Image.Image | None:
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
                 if resp.status != 200:
-                    print(f"Failed to download image: {resp.status}")
+                    logger.error(f"Failed to download image: {resp.status}")
                     return None
                 image_data = await resp.read()
                 return Image.open(BytesIO(image_data))
     except Exception as e:
-        print(f"Error downloading image: {e}")
+        logger.error(f"Error downloading image: {e}")
         return None
 
 class AIChat(commands.Cog):
@@ -70,10 +70,10 @@ class AIChat(commands.Cog):
         self.cooldown_manager.add_global_limit(500, 86400)
 
     def cog_load(self):
-        print("Cog AI Chat has been loaded!")
+        logger.info("Cog AI Chat has been loaded!")
 
     def cog_unload(self):
-        print("Cog AI Chat has been unloaded!")
+        logger.info("Cog AI Chat has been unloaded!")
 
     def update_baisc_system_prompt(self):
         self.system_prompt_short = load_text_prompt()
@@ -198,7 +198,7 @@ class AIChat(commands.Cog):
 
         except Exception as e:
             logger.exception(f"Error in AI chat command: {e}")
-            await interaction.followup.send("An error occurred while generating a response. Try again later.", ephemeral=True)
+            await interaction.followup.send(f"An error occurred while generating a response. Try again later. {e}", ephemeral=True)
 
     async def generate_ai_reply(self, message_content, use_chat_history=False):
         system_prompt = self.system_prompt_long if use_chat_history else self.system_prompt_short
@@ -328,6 +328,8 @@ class AIChat(commands.Cog):
 
         except Exception as e:
             logger.exception(f"Error in AI chat command: {e}")
+            # Explicitly reply
+            await message.reply(f"An error occurred while generating a response. Try again later. {e}")
 
 async def setup(bot):
     """Registers the cog with the bot."""
