@@ -46,7 +46,7 @@ class BasicCommands(commands.Cog):
     @app_commands.checks.cooldown(1, 60, key=lambda i: (i.guild_id, i.user.id))
     async def help(self, interaction):
         embed = discord.Embed(
-            title="Dune 2000 Bot Commands",
+            title="Server Bot Command List",
             description="Here is a list of available commands you can use:",
             color=discord.Color.blue()
         )
