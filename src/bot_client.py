@@ -4,7 +4,6 @@ from discord import app_commands
 import logging
 from config import D2K_SERVER_ID
 import os
-from utils.command_checks import is_creator
 
 logger = logging.getLogger(__name__)
 guild = discord.Object(D2K_SERVER_ID)
@@ -24,6 +23,7 @@ class MyClient(commands.Bot):
         # Added help_command=None to disable the default "!help" command
         super().__init__(command_prefix="!", intents=intents, help_command=None)  # "!" is just a placeholder
         self.cogs_list = [
+            "extension_control"
             "basic_commands",
             "excuses",
             "ircbot",
@@ -34,7 +34,7 @@ class MyClient(commands.Bot):
         ]
 
     async def setup_hook(self):
-        # Clear global commands first
+        # Clear global commands first (to be commented out)
         self.tree.clear_commands(guild=None)
         self.tree.clear_commands(guild=guild)
         await self.tree.sync()
@@ -45,10 +45,6 @@ class MyClient(commands.Bot):
             cog_name = f"cogs.{cog}"
             logger.info(f"Loading extension {cog_name}")
             await self.load_extension(cog_name)  # the app commands in the cogs are auto added
-
-        # Manually add the commands to the command tree
-        self.tree.add_command(self.loadext, guild=guild)
-        self.tree.add_command(self.unloadext, guild=guild)
 
         # Register global app command error handler
         self.tree.error(self.app_command_error_handler)
@@ -67,69 +63,6 @@ class MyClient(commands.Bot):
     async def on_ready(self):
         logger.info(f'Logged in as {self.user}')
         logger.info('------')
-
-    @app_commands.command(name="loadext", description="[Admin only]")
-    @app_commands.check(is_creator)
-    async def loadext(self, interaction: discord.Interaction, cog: str):
-        """Slash command to load a cog dynamically"""
-        cog_path = f"cogs.{cog}"
-        try:
-            try:
-                await self.load_extension(cog_path)
-                # noinspection PyUnresolvedReferences
-                await self.sync_commands()  # Resync commands after modification
-                # noinspection PyUnresolvedReferences
-                await interaction.response.send_message(f"✅ Successfully loaded `{cog}` cog.", ephemeral=True)
-                logger.info(f"Loaded cog: {cog}")
-            except ModuleNotFoundError:
-                # noinspection PyUnresolvedReferences
-                await interaction.response.send_message(f"❌ Cog `{cog}` not found! Make sure it exists in `cogs/`.",
-                                                        ephemeral=True)
-                logger.error(f"Failed to load cog `{cog}`: Module not found.")
-            except commands.ExtensionFailed as e:
-                # noinspection PyUnresolvedReferences
-                await interaction.response.send_message(f"❌ Cog `{cog}` exists but failed to load!\nError: {e}",
-                                                        ephemeral=True)
-                logger.error(f"Failed to load cog `{cog}`: {e}")
-            except Exception as e:
-                # noinspection PyUnresolvedReferences
-                await interaction.response.send_message(f"❌ Unexpected error loading `{cog}`: {e}", ephemeral=True)
-                logger.exception(f"Unexpected error loading extension `{cog}`: {e}")
-        except Exception as e:
-            logger.exception(f"Unexpected error when sending error message when loading extension `{cog}`: {e}")
-
-    @app_commands.command(name="unloadext", description="[Admin only]")
-    @app_commands.check(is_creator)
-    async def unloadext(self, interaction: discord.Interaction, cog: str):
-        """Slash command to load a cog dynamically"""
-        cog_path = f"cogs.{cog}"
-        try:
-            # Check if the extension is loaded
-            if cog_path not in self.extensions:
-                # noinspection PyUnresolvedReferences
-                await interaction.response.send_message(
-                    f"❌ The cog `{cog}` is not loaded or does not exist.",
-                    ephemeral=True
-                )
-                logger.warning(f"Attempted to unload non-existent cog: {cog}")
-                return
-
-            try:
-                await self.unload_extension(cog_path)
-                # noinspection PyUnresolvedReferences
-                await self.sync_commands()  # Resync commands after modification
-                # noinspection PyUnresolvedReferences
-                await interaction.response.send_message(f"✅ Successfully unloaded `{cog}` cog.", ephemeral=True)
-                logger.info(f"Unloaded cog: {cog}")
-            except Exception as e:
-                logger.error(f"Failed to unload cog {cog}: {e}")
-                # noinspection PyUnresolvedReferences
-                await interaction.response.send_message(
-                    f"❌ The cog `{cog}` exists but failed to unload. Error: {e}",
-                    ephemeral=True
-                )
-        except Exception as e:
-            logger.exception(f"Unexpected error when sending error message when unloading extension `{cog}`: {e}")
 
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
