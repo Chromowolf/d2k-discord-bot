@@ -130,6 +130,9 @@ class AIChat(commands.Cog):
             user_nickname = interaction.user.nick or interaction.user.global_name or interaction.user.name
             user_id = interaction.user.id
 
+            logger.info(
+                f"{user_nickname} (ID: {user_id}) used AI chat command. Preparing to send the prompt."
+            )
             # Get timestamp of the message and format it (UTC time)
             timestamp = interaction.created_at.strftime("%Y-%m-%d %H:%M:%S UTC")
 
@@ -143,50 +146,9 @@ class AIChat(commands.Cog):
             # noinspection PyUnresolvedReferences
             await interaction.response.defer()  # Defer response to allow processing time
 
-            # system_prompt = self.system_prompt_long if use_chat_history else self.system_prompt_short
-            # # Generate AI response
-            # response = await self.aiclient.aio.models.generate_content(
-            #     model=self.model,
-            #     contents=prompt,
-            #     config=types.GenerateContentConfig(
-            #         system_instruction=system_prompt,
-            #         max_output_tokens=100000,
-            #         # seed=42,
-            #         safety_settings=[
-            #             types.SafetySetting(
-            #                 category=types.HarmCategory.HARM_CATEGORY_HARASSMENT,
-            #                 threshold=types.HarmBlockThreshold.BLOCK_NONE
-            #             ),
-            #             types.SafetySetting(
-            #                 category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-            #                 threshold=types.HarmBlockThreshold.BLOCK_NONE
-            #             ),
-            #             types.SafetySetting(
-            #                 category=types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-            #                 threshold=types.HarmBlockThreshold.BLOCK_NONE
-            #             ),
-            #             types.SafetySetting(
-            #                 category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-            #                 threshold=types.HarmBlockThreshold.BLOCK_NONE
-            #             ),
-            #             types.SafetySetting(
-            #                 category=types.HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY,
-            #                 threshold=types.HarmBlockThreshold.BLOCK_NONE
-            #             )
-            #         ]
-            #     ),
-            # )
-            #
-            # ai_reply = response.text if response.text else "I couldn't generate a response. Try again!"
-            # response_json = response.to_json_dict()
-            # total_token_count = response_json.get("usage_metadata", {}).get("total_token_count", 0)
-            # logger.debug(f"Total token count of this request: {total_token_count}")
-            # logger.debug(f"response info: \n{json.dumps(response.model_dump(), indent=2)}")
-
             ai_reply, response_info = await self.generate_ai_reply(prompt, use_chat_history=use_chat_history)
             usage_metadata = response_info.get("usage_metadata", {})
             logger.info(
-                f"{user_nickname} (ID: {user_id}) used AI chat. "
                 f"Prompt tokens: {usage_metadata.get("prompt_token_count", None)}, "
                 f"Response tokens: {usage_metadata.get("candidates_token_count", None)}."
             )
@@ -271,6 +233,10 @@ class AIChat(commands.Cog):
             user_nickname = message.author.nick or message.author.global_name or message.author.name
             user_id = message.author.id
 
+            logger.info(
+                f"{user_nickname} (ID: {user_id}) used AI interaction. Preparing to send the prompt."
+            )
+
             ###################
             # Get contexts
             ###################
@@ -320,7 +286,6 @@ class AIChat(commands.Cog):
                 )
                 usage_metadata = response_info.get("usage_metadata", {})
                 logger.info(
-                    f"{user_nickname} (ID: {user_id}) used AI interaction. "
                     f"Prompt tokens: {usage_metadata.get("prompt_token_count", None)}, "
                     f"Response tokens: {usage_metadata.get("candidates_token_count", None)}."
                 )
