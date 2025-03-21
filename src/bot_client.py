@@ -23,7 +23,7 @@ class MyClient(commands.Bot):
         # Added help_command=None to disable the default "!help" command
         super().__init__(command_prefix="!", intents=intents, help_command=None)  # "!" is just a placeholder
         self.cogs_list = [
-            "extension_control"
+            "extension_control",
             "basic_commands",
             "excuses",
             "ircbot",
