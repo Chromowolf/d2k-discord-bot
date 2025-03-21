@@ -66,7 +66,7 @@ class ExtensionControl(commands.Cog):
             try:
                 await self.bot.unload_extension(ext_path)
                 # noinspection PyUnresolvedReferences
-                await self.sync_commands()  # Resync commands after modification
+                await self.bot.sync_commands()  # Resync commands after modification
                 # noinspection PyUnresolvedReferences
                 await interaction.response.send_message(f"✅ Successfully unloaded `{ext}` extension.", ephemeral=True)
                 logger.info(f"Unloaded extension: {ext}")
