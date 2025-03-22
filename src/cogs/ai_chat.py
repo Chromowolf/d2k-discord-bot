@@ -131,7 +131,7 @@ class AIChat(commands.Cog):
             user_id = interaction.user.id
 
             logger.info(
-                f"{user_nickname} (ID: {user_id}) used AI chat command. Preparing to send the prompt."
+                f"{user_nickname} (ID: {user_id}) used AI chat command in {interaction.guild.name} (ID: {interaction.guild.id}). Preparing to send the prompt."
             )
             # Get timestamp of the message and format it (UTC time)
             timestamp = interaction.created_at.strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -207,7 +207,7 @@ class AIChat(commands.Cog):
         return ai_reply, response_info
 
     @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message(self, message: discord.Message):
         try:
             # Ignore messages from the bot itself
             if message.author == self.bot.user:
@@ -234,7 +234,7 @@ class AIChat(commands.Cog):
             user_id = message.author.id
 
             logger.info(
-                f"{user_nickname} (ID: {user_id}) used AI interaction. Preparing to send the prompt."
+                f"{user_nickname} (ID: {user_id}) used AI interaction in {message.guild.name} (ID: {message.guild.id}). Preparing to get context and send the prompt."
             )
 
             ###################

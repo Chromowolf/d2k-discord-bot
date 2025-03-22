@@ -10,6 +10,9 @@ guild = discord.Object(D2K_SERVER_ID)
 DATA_FOLDER = "data"
 
 class MyClient(commands.Bot):
+    """
+    Slash commmands cannot be added inside the bot class!
+    """
     def __init__(self):
         # intents = discord.Intents.default()  # Cannot use on_member_join
         intents = discord.Intents.all()
