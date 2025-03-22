@@ -148,8 +148,7 @@ class YouTubeCog(commands.Cog):
         """
         new_vid_list = []
         for player_name, player_info in self.player_youtube_info.items():
-            # last_video_ts = player_info["last_upload_datetime"]
-            last_video_ts = "2025-03-14T12:50:50Z"
+            last_video_ts = player_info["last_upload_datetime"]
             new_videos = await get_latest_videos(player_info["playlist_id"], last_video_ts)
 
             if new_videos:
