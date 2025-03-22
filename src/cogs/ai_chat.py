@@ -131,7 +131,7 @@ class AIChat(commands.Cog):
             user_id = interaction.user.id
 
             logger.info(
-                f"{user_nickname} (ID: {user_id}) used AI chat command in {interaction.guild.name} (ID: {interaction.guild.id}). Preparing to send the prompt."
+                f"{user_nickname} (ID: {user_id}) used AI chat command in {interaction.channel.name} (ID: {interaction.channel.id}). Preparing to send the prompt."
             )
             # Get timestamp of the message and format it (UTC time)
             timestamp = interaction.created_at.strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -234,7 +234,7 @@ class AIChat(commands.Cog):
             user_id = message.author.id
 
             logger.info(
-                f"{user_nickname} (ID: {user_id}) used AI interaction in {message.guild.name} (ID: {message.guild.id}). Preparing to get context and send the prompt."
+                f"{user_nickname} (ID: {user_id}) used AI interaction in {message.channel.name} (ID: {message.channel.id}). Preparing to get context and send the prompt."
             )
 
             ###################
