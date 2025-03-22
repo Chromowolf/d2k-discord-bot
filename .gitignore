@@ -7,3 +7,4 @@ __pycache__/
 .venv/
 *.log
 /src/data/youtube_channels.json
+/src/data/player_youtube_info.json

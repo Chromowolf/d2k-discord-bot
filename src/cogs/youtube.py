@@ -17,7 +17,7 @@ guild = discord.Object(D2K_SERVER_ID)
 # Define the file path inside the 'data' folder
 # Make sure the data folder is right in the working dir!!!
 DATA_FOLDER = "data"
-FILE_PATH = os.path.join(DATA_FOLDER, "youtube_channels.json")
+FILE_PATH = os.path.join(DATA_FOLDER, "player_youtube_info.json")
 
 api_url = "https://www.googleapis.com/youtube/v3/"
 url_channels = api_url + "channels"
