@@ -48,13 +48,13 @@ async def get_youtuber_info(custom_handle):
             "key": YOUTUBE_API_TOKEN
         }) as response:
             if response.status != 200:
-                print(f"Error fetching data: {response.status}")
+                logger.error(f"[get_youtuber_info] Error fetching data: {response.status}")
                 return None
 
             channel_data = await response.json()
 
     if "items" not in channel_data or not channel_data["items"]:
-        print(f"❌ No channel found for this handle: {custom_handle}")
+        logger.error(f"[get_youtuber_info] ❌ No channel found for this handle: {custom_handle}")
         return None
     channel_info = channel_data["items"][0]
 
@@ -68,11 +68,11 @@ async def get_youtuber_info(custom_handle):
             "key": YOUTUBE_API_TOKEN
         }) as response:
             if response.status != 200:
-                print(f"Error fetching data: {response.status}")
+                logger.error(f"[get_youtuber_info] Error fetching data in: {response.status}")
                 return None
             play_list_data = await response.json()
     if "items" not in play_list_data or not play_list_data["items"]:
-        print(f"❌ No videos found for playlist ID: {playlist_id}")
+        logger.error(f"[get_youtuber_info] ❌ No videos found for playlist ID: {playlist_id}")
         return None
     last_upload_datetime = play_list_data["items"][0]["snippet"]["publishedAt"]
 
@@ -92,7 +92,7 @@ async def get_latest_videos(playlist_id: str, after_timestamp: str, max_number=5
     Fetch latest videos from a given playlist ID after the specified timestamp.
     """
     if after_timestamp and not ts_re.match(after_timestamp):
-        print("Malformed timestamp!")
+        logger.error("Malformed timestamp!")
         return []
 
     async with aiohttp.ClientSession() as session:
@@ -103,13 +103,13 @@ async def get_latest_videos(playlist_id: str, after_timestamp: str, max_number=5
             "key": YOUTUBE_API_TOKEN
         }) as response:
             if response.status != 200:
-                print(f"Error fetching data: {response.status}")
+                logger.error(f"[get_latest_videos] Error fetching data: {response.status}")
                 return []
 
             play_list_data = await response.json()
 
     if "items" not in play_list_data or not play_list_data["items"]:
-        print(f"❌ No videos found for playlist: {playlist_id}")
+        logger.error(f"[get_latest_videos] ❌ No videos found for playlist: {playlist_id}")
         return []
 
     ret = []
@@ -118,7 +118,6 @@ async def get_latest_videos(playlist_id: str, after_timestamp: str, max_number=5
         published_at = vid_snippet["publishedAt"]
         if published_at <= after_timestamp:
             break
-        # print_json(vid_snippet["thumbnails"])
         vid_info = {
             "published_at": published_at,
             "video_id": vid_snippet["resourceId"]["videoId"],
