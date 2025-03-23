@@ -317,7 +317,7 @@ class IRCCog(commands.Cog):
                 )
             else:
                 embed = discord.Embed(
-                    title=f"NO PLAYERS ONLINE <:poop_ugh:610894269242408972>",
+                    title=f"NO PLAYERS ONLINE :rage:",
                     description=":sleeping::zzz::cricket::cactus:",
                     color=discord.Color.blue()
                 )
