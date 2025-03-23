@@ -18,7 +18,8 @@ from io import BytesIO
 from utils.command_checks import is_creator
 
 # Rate limits: https://ai.google.dev/gemini-api/docs/rate-limits#free-tier
-# Doc: https://github.com/google-gemini/generative-ai-python
+# Doc: https://github.com/google-gemini/generative-ai-python (deprecated on 2025-03-19)
+# New doc: https://ai.google.dev/gemini-api/docs/migrate
 # Non-free vertex ai: https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal
 
 logger = logging.getLogger(__name__)
