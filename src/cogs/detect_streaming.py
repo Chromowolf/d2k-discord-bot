@@ -40,7 +40,7 @@ class StreamNotifier(commands.Cog):
             # Detect streaming start
             if not before.self_stream and after.self_stream:
                 self.active_streams[member.id] = voice_channel.id  # Store active stream
-                message = f'**{member.display_name}** has started a live stream in {channel_link}! <:D2K_Worm:1189389809878323380> <:poop_ugh:610894269242408972>'
+                message = f'**{member.display_name}** has started a live stream in {channel_link}! <:D2K_Worm:1189389809878323380>'
                 logger.info(f"Stream started by {member.display_name} in {voice_channel.name}")
                 await system_channel.send(message)
 
