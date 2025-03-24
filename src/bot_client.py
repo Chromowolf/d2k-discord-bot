@@ -55,6 +55,7 @@ class MyClient(commands.Bot):
 
     async def sync_commands(self):
         try:
+            logger.info(f"Syncing commands to guild {guild.id}.")
             synced = await self.tree.sync(guild=guild)
             logger.info(f"Synced {len(synced)} commands to guild {guild.id}.")
             # Log details of each command
