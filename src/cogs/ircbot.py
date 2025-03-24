@@ -305,7 +305,7 @@ class IRCCog(commands.Cog):
                         flag_emoji = ":pirate_flag:"
                     else:
                         country_code_lower = country_code.lower()
-                        flag_emoji = f":flag_{country_code.lower()}:" if country_code_lower in all_country_codes else ":clown:"
+                        flag_emoji = f":flag_{country_code.lower()}:" if country_code_lower in all_country_codes else ":flag_black:"
                     status_emoji = ":green_circle:" if "H" in player_info[5] else ":red_circle:"
                     escaped_players_with_status.append(
                         f"{status_emoji} {flag_emoji} {player_name_escaped}"
