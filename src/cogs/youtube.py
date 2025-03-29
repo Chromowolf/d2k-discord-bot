@@ -166,7 +166,7 @@ class YouTubeCog(commands.Cog):
 
         return new_vid_list
 
-    @tasks.loop(minutes=5)
+    @tasks.loop(minutes=10)
     async def check_youtube_task(self):
         try:
             new_videos = await self.check_new_videos()
