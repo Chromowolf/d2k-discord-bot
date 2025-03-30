@@ -128,7 +128,13 @@ class AIChat(commands.Cog):
                 return
 
             # Get user details
-            user_nickname = interaction.user.nick or interaction.user.global_name or interaction.user.name
+            cur_user = interaction.user
+            if hasattr(cur_user, "nick"):
+                user_nickname = cur_user.nick
+            elif hasattr(cur_user, "global_name"):
+                user_nickname = cur_user.global_name
+            else:
+                user_nickname = cur_user.name
             user_id = interaction.user.id
 
             logger.info(

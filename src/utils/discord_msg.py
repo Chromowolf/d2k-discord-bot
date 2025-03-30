@@ -84,7 +84,12 @@ def format_message(message: discord.Message):
     """Format a single message for the prompt."""
     user = message.author
     user_id = user.id
-    nickname = user.nick or user.global_name or user.name
+    if hasattr(user, "nick"):
+        nickname = user.nick
+    elif hasattr(user, "global_name"):
+        nickname = user.global_name
+    else:
+        nickname = user.name
     timestamp = message.created_at.strftime("%Y-%m-%d %H:%M:%S UTC")
 
     replied_message = None
